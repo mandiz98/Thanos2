@@ -3,23 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_connect">
 
     <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.example.thanos2app.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/navigation_connect"
+        android:name="com.example.thanos2app.ui.connect.ConnectFragment"
+        android:label="@string/title_connect"
+        tools:layout="@layout/fragment_connect" >
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.thanos2app.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_control"
+        android:name="com.example.thanos2app.ui.control.ControlFragment"
+        android:label="@string/title_control"
+        tools:layout="@layout/fragment_control" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.example.thanos2app.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_visualize"
+        android:name="com.example.thanos2app.ui.visualize.VisualizeFragment"
+        android:label="@string/title_visualize"
+        tools:layout="@layout/fragment_visualize" />
 </navigation>

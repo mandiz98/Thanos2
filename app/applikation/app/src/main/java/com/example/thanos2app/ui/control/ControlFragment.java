@@ -1,4 +1,4 @@
-package com.example.thanos2app.ui.home;
+package com.example.thanos2app.ui.control;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.thanos2app.R;
 
-public class HomeFragment extends Fragment {
+public class ControlFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private ControlViewModel controlViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        controlViewModel =
+                ViewModelProviders.of(this).get(ControlViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_control, container, false);
+        final TextView textView = root.findViewById(R.id.text_dashboard);
+        controlViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
