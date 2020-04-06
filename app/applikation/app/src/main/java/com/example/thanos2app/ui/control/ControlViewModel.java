@@ -10,7 +10,7 @@ public class ControlViewModel extends ViewModel {
 
     public ControlViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        mText.setValue("This is Control fragment");
     }
 
     public LiveData<String> getText() {
