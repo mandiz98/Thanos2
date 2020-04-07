@@ -2,13 +2,16 @@
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include "MeAuriga.h"
+#include <MotorCommands.h>
 
-MeBuzzer sing(45);
+#define BUZZER_PORT 45
+
+//includes and port mapping for the makeblock library.
+MeBuzzer buzzer(BUZZER_PORT);
 MeUltrasonicSensor us(PORT_10);
 MeBluetooth bt(PORT_3);
-MeEncoderOnBoard motor1(SLOT1);
-MeEncoderOnBoard motor2(SLOT2);
-MeEncoderMotor encoders[2];
+MotorCommands driver;
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -23,32 +26,28 @@ void loop() {
     char x = Serial.read();
     if(x == '1')
       {
-        motor1.setMotorPwm(-180);
-        motor2.setMotorPwm(180);
-        sing.tone(45, 440, 100);
+        driver.Drive(180);
+        buzzer.tone(BUZZER_PORT, 440, 100);
+        
       }
     else if(x == '2')
       {
-        motor1.setMotorPwm(-180);
-        motor2.setMotorPwm(-180);
+        
       }
       
     else if(x == '3')
     {
-      motor1.setMotorPwm(180);
-      motor2.setMotorPwm(180);
+      
     }
 
     else if(x == '4')
     {
-      motor1.setMotorPwm(180);
-      motor2.setMotorPwm(-180);
+      driver.Drive(-180);
     }
 
     else if(x == '5')
     {
-      motor1.setMotorPwm(0);
-      motor2.setMotorPwm(0);
+      driver.stop();
     }   
   }
 }

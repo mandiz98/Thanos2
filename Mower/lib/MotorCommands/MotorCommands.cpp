@@ -1,0 +1,42 @@
+/** 
+ * \class MotorCommands
+ * \brief Class used to control the onboard motors on the mower
+ * @file MotorCommands.cpp
+ * @author Edvin Egerhag, Thanos2
+ * @version 0.1
+ * @date 07/04/2020
+ * @brief source file for MotorCommands.h
+ * 
+ * \par Method list:
+ * 
+ *      1. void MotorCommands::Drive(int speed);
+ *      2. void MotorCommands::stop();
+*/
+#include "MotorCommands.h"
+
+MotorCommands::MotorCommands()
+{
+    _motor1.setPin(SLOT1);
+    _motor2.setPin(SLOT2);
+}
+
+MotorCommands::~MotorCommands()
+{
+}
+
+void MotorCommands::Drive(int speed)
+{
+    _motor1.setMotorPwm(-speed);
+    _motor2.setMotorPwm(speed);
+}
+
+void MotorCommands::stop()
+{
+    _motor1.setMotorPwm(0);
+    _motor2.setMotorPwm(0);
+}
+
+void driving()
+{
+
+}
