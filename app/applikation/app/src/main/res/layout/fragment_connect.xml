@@ -16,4 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.4" />
+
+    <Button
+        android:id="@+id/btnIsVisible"
+        android:layout_width="87dp"
+        android:layout_height="46dp"
+        android:text="Visible"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="45dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
