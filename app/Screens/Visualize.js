@@ -10,10 +10,14 @@ import {
 } from 'react-native';
 
 
-export function Visualize(){
-    return(
-        <View>
-            <Text>Hej från Visualize</Text>
-        </View>
-    )
+
+export class Visualize extends React.Component {
+
+    render(){
+        return(
+            <View>
+                <Text>Hej från Visualize</Text>
+            </View>
+        )
+    }
 }

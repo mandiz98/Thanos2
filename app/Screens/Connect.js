@@ -1,26 +1,5 @@
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity 
-} from 'react-native';
 
-
-export function Connect(){
-    return(
-        <View>
-            <Text>Hej från connect</Text>
-        </View>
-    )
-}
-
-
-/* 
 import React from 'react';
 import {
   SafeAreaView,
@@ -45,7 +24,7 @@ import { stringToBytes } from 'convert-string';
 
 
 
-export default class Connect extends React.Component {
+export class Connect extends React.Component {
 
   constructor(props){
     super(props)
@@ -108,8 +87,13 @@ export default class Connect extends React.Component {
 
   render(){
     return (
-       <View>
-           <Text>HEsjansakjndandas</Text>
+      <View>
+        <TouchableOpacity style={styles.connectBtn} onPress={this.onClick}>
+          <Text style={{fontSize: 40}}>Connect</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.connectBtn} onPress={this.writeBtn}>
+          <Text style={{fontSize: 40}}>Write</Text>
+        </TouchableOpacity>
       </View>
       );
   }
@@ -126,5 +110,5 @@ const styles = StyleSheet.create({
     marginTop: "50%",
     
   }
-}); */
+});
 

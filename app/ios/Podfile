@@ -57,6 +57,8 @@ target 'Thanos2' do
   pod 'react-native-ble-manager', :path => '../node_modules/react-native-ble-manager'
 
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
   target 'Thanos2Tests' do
     inherit! :complete
     # Pods for testing

@@ -10,10 +10,14 @@ import {
 } from 'react-native';
 
 
-export function Controller(){
-    return(
-        <View>
-            <Text>Hej från controller</Text>
-        </View>
-    )
+
+export class Controller extends React.Component {
+
+    render(){
+        return(
+            <View>
+                <Text>Hej från controller</Text>
+            </View>
+        )
+    }
 }
