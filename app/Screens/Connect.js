@@ -6,7 +6,8 @@ import {
   View,
   Text,
   StatusBar,
-  TouchableOpacity 
+  TouchableOpacity,
+  Image
 } from 'react-native';
 
 import {
@@ -94,12 +95,13 @@ export class Connect extends React.Component {
   render(){
     return (
       <View>
+        <TouchableOpacity onPress={this.writeBtn}>
+        <Image source={require('../images/thanos.png')} style={styles.logo }/>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.connectBtn} onPress={this.onClick}>
           <Text style={{fontSize: 40, color: "white"}}>Connect</Text>
           <Icon color={"#306493"} name={"ios-bluetooth"} size = {50} style= {styles.bt}/>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.writeBtn} onPress={this.writeBtn}>
-          <Text style={{fontSize: 40}}>Write</Text>
         </TouchableOpacity>
       </View>
       );
@@ -112,7 +114,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: "50%",
+    marginTop: "5%",
     height: 200,
     width: 200,
     borderRadius: 100,
@@ -123,8 +125,10 @@ const styles = StyleSheet.create({
   bt: { 
     alignSelf: "center"
   },
-  writeBtn: {
-    marginBottom: 25,
-    alignSelf: "center"
+  logo: {
+    width: 300,
+    height: 300,
+    alignSelf: "center",
+    resizeMode: "center"
   }
 });
