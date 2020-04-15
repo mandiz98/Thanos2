@@ -8,9 +8,17 @@ const Tabs = createBottomTabNavigator()
 
 export default function TabNavigator(){
     return(
-        <Tabs.Navigator>
+        <Tabs.Navigator
+            initialRouteName="connect"
+            tabBarOptions={{
+                activeTintColor: 'white',
+                inactiveTintColor: "#A788A8",
+                activeBackgroundColor: "#6F3C89",
+                inactiveBackgroundColor: "#6F3C89"
+            }}
+        >
             <Tabs.Screen name="connect" component={ConnectScreenStack} options={{
-                tabBarLabel: 'Home',
+                tabBarLabel: 'Connect',
                 tabBarIcon: ({ color, size }) => (
                 <Icon name={"ios-bluetooth"} color={color} size={size} />
                 ),

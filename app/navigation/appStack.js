@@ -10,7 +10,12 @@ const stack = createStackNavigator()
 export function ConnectScreenStack(){
     return(
         <stack.Navigator>
-            <stack.Screen name="Connect" component={Connect}/>
+            <stack.Screen name="Connect" component={Connect} options={{
+          headerStyle: {
+            backgroundColor: '#6F3C89',
+          },
+          headerTintColor: '#fff',
+        }}/>
         </stack.Navigator>
     )
 }
@@ -18,7 +23,12 @@ export function ConnectScreenStack(){
 export function ControllerScreenStack(){
     return(
         <stack.Navigator>
-            <stack.Screen name="Controller" component={Controller}/>
+            <stack.Screen name="Controller" component={Controller} options={{
+          headerStyle: {
+            backgroundColor: '#6F3C89',
+          },
+          headerTintColor: '#fff',
+        }}/>
         </stack.Navigator>
     )
 }
@@ -26,7 +36,12 @@ export function ControllerScreenStack(){
 export function VisualizeScreenStack(){
     return(
         <stack.Navigator>
-            <stack.Screen name="Visualize" component={Visualize}/>
+            <stack.Screen name="Visualize" component={Visualize} options={{
+          headerStyle: {
+            backgroundColor: '#6F3C89',
+          },
+          headerTintColor: '#fff',
+        }}/>
         </stack.Navigator>
     )
 }

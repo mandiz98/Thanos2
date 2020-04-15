@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import {
   SafeAreaView,
@@ -20,9 +18,13 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import BleManager from "react-native-ble-manager"
 import { stringToBytes } from 'convert-string';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
-
+const MAC = '00:1B:10:65:FA:CC'
+const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
+const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
+const baudRate = 115200;
 
 export class Connect extends React.Component {
 
@@ -34,22 +36,18 @@ export class Connect extends React.Component {
   }
 
   async writeBtn(){
-    const id = '00:1B:10:65:FA:CC'
-    const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
-    const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
-    const baudRate = 115200;
-    
 
-    const data = stringToBytes('1');
+    const data = [1]
     console.log(data)
 
-    BleManager.retrieveServices(id).then((peripheralInfo) => {
+    BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+      //console.log(peripheralInfo)
 
       setTimeout(() => {
-        BleManager.startNotification(id, serviceID, characteristicID).then(() => {
-          console.log('Started notification on ' + id);
+        BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+          console.log('Started notification on ' + MAC);
           setTimeout(() => {
-            BleManager.write(id, serviceID, characteristicID, data).then(() => {
+            BleManager.write(MAC, serviceID, characteristicID, data).then(() => {
               console.log("Success Write");
               
             }).catch((e) => {
@@ -63,6 +61,14 @@ export class Connect extends React.Component {
       }, 200);
     });
 
+
+    BleManager.read(MAC, serviceID, characteristicID).then((result) => {
+      console.log(result, "hakdnka")
+    })
+    .catch((e) => {
+      console.log(e)
+    })
+
   }
 
   async onClick(){
@@ -73,12 +79,12 @@ export class Connect extends React.Component {
       console.log('Module initialized');
     });
 
-     await BleManager.connect('00:1B:10:65:FA:CC')
+     await BleManager.connect(MAC)
     .catch((e) => {
       console.log(e)
     })
 
-    await BleManager.isPeripheralConnected('00:1B:10:65:FA:CC')
+    await BleManager.isPeripheralConnected(MAC)
     .then((isConnected) => {
       console.log(isConnected)
     })
@@ -89,9 +95,10 @@ export class Connect extends React.Component {
     return (
       <View>
         <TouchableOpacity style={styles.connectBtn} onPress={this.onClick}>
-          <Text style={{fontSize: 40}}>Connect</Text>
+          <Text style={{fontSize: 40, color: "white"}}>Connect</Text>
+          <Icon color={"#306493"} name={"ios-bluetooth"} size = {50} style= {styles.bt}/>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.connectBtn} onPress={this.writeBtn}>
+        <TouchableOpacity style={styles.writeBtn} onPress={this.writeBtn}>
           <Text style={{fontSize: 40}}>Write</Text>
         </TouchableOpacity>
       </View>
@@ -100,15 +107,24 @@ export class Connect extends React.Component {
   
 };
 
-
-
 const styles = StyleSheet.create({
   connectBtn: {
     alignSelf: "center",
-    borderColor: "red",
-    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: "50%",
-    
+    height: 200,
+    width: 200,
+    borderRadius: 100,
+    borderWidth: 2,
+    borderColor: "white",
+    backgroundColor: "#A788A8"
+  },
+  bt: { 
+    alignSelf: "center"
+  },
+  writeBtn: {
+    marginBottom: 25,
+    alignSelf: "center"
   }
 });
-
