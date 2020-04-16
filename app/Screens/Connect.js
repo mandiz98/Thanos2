@@ -9,18 +9,17 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
+import Colors from "../Colors"
 
 import {
   Header,
   LearnMoreLinks,
-  Colors,
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import BleManager from "react-native-ble-manager"
 import { stringToBytes } from 'convert-string';
 import Icon from 'react-native-vector-icons/Ionicons';
-
 
 const MAC = '00:1B:10:65:FA:CC'
 const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
@@ -37,18 +36,18 @@ export class Connect extends React.Component {
   }
 
   async writeBtn(){
+    console.log("----------------------------------------------------")
+    //const data = stringToBytes('1')
+    //console.log(data)
 
-    const data = [1]
-    console.log(data)
-
-    BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+    /* BleManager.retrieveServices(MAC).then((peripheralInfo) => {
       //console.log(peripheralInfo)
 
       setTimeout(() => {
         BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
           console.log('Started notification on ' + MAC);
           setTimeout(() => {
-            BleManager.write(MAC, serviceID, characteristicID, data).then(() => {
+            BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
               console.log("Success Write");
               
             }).catch((e) => {
@@ -60,16 +59,27 @@ export class Connect extends React.Component {
           console.log('Notification error', error);
         });
       }, 200);
+    }); */
+
+    BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+      //console.log(peripheralInfo)
+
+      setTimeout(() => {
+        BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+          console.log('Started notification on ' + MAC);
+          setTimeout(() => {
+            BleManager.read(MAC, "ffe1", "ffe2").then((result) => {
+              console.log(result, "hakdnka")
+            })
+            .catch((e) => {
+              console.log(e, "vad skriver mBot? DISARNA knows")
+            })
+          }, 500);
+        }).catch((error) => {
+          console.log('Notification error', error);
+        });
+      }, 200);
     });
-
-
-    BleManager.read(MAC, serviceID, characteristicID).then((result) => {
-      console.log(result, "hakdnka")
-    })
-    .catch((e) => {
-      console.log(e)
-    })
-
   }
 
   async onClick(){
@@ -100,8 +110,8 @@ export class Connect extends React.Component {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.connectBtn} onPress={this.onClick}>
-          <Text style={{fontSize: 40, color: "white"}}>Connect</Text>
-          <Icon color={"#306493"} name={"ios-bluetooth"} size = {50} style= {styles.bt}/>
+          <Text style={{fontSize: 40, color: Colors.white}}>Connect</Text>
+          <Icon color={Colors.lightBlue} name={"ios-bluetooth"} size = {50} style= {styles.bt}/>
         </TouchableOpacity>
       </View>
       );
@@ -119,8 +129,8 @@ const styles = StyleSheet.create({
     width: 200,
     borderRadius: 100,
     borderWidth: 2,
-    borderColor: "white",
-    backgroundColor: "#A788A8"
+    borderColor: Colors.white,
+    backgroundColor: Colors.lavender
   },
   bt: { 
     alignSelf: "center"
