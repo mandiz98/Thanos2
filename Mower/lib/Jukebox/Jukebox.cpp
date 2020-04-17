@@ -67,55 +67,10 @@ void Jukebox::play(int song)
 
         sing(melody, duration);
     }
+
+    else if(song == BASICBITCH)
+        {
+            _buzzer.tone(440, 100);
+            _buzzer.noTone();
+        }
 }
-
-
-/*_buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(196, 300);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(247, 200);
-        delay(30);
-        _buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(196, 300);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(247, 500);
-        delay(100);
-        _buzzer.tone(196, 200);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(196, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(185, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(185, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(165, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(165, 100);
-        _buzzer.noTone();
-        delay(30);
-        _buzzer.tone(147, 100);
-        _buzzer.noTone();
-        delay(30);*/

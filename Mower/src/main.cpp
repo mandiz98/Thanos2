@@ -5,10 +5,7 @@
 #include <MotorCommands.h>
 #include <Jukebox.h>
 
-#define BUZZER_PORT 45
-
 //includes and port mapping for the makeblock library.
-MeBuzzer buzzer(BUZZER_PORT);
 MeUltrasonicSensor us(PORT_10);
 MotorCommands driver;
 Jukebox jukebox;
@@ -19,28 +16,43 @@ void setup()
   Serial.begin(115200);
 }
 
- // put your main code here, to run repeatedly:
+// put your main code here, to run repeatedly:
 void loop()
 {
   if (Serial.available())
   {
-    //Serial.write("Hej erik");
-    //delay(100);
     byte x = Serial.read();
     x = char(x);
     if (x == '1')
     {
-      //laCucaracha();
-      driver.Drive(280);
+      driver.Drive(180);
     }
     else if (x == '2')
     {
-      driver.Turn(LEFT);
+      //driver.Turn(LEFT);
+      for(int i = 90; i >= 0; i = i - 10)
+      {
+        driver.test(i);
+        Serial.print("sending " );
+        Serial.println(i);
+        delay(2000);
+      }
+
+      driver.stop();
     }
 
     else if (x == '3')
     {
-      driver.Turn(RIGHT);
+      //driver.Turn(RIGHT);
+      for(int i = 90; i <= 180; i = i + 10)
+      {
+        driver.test(i);
+        Serial.print("sending " );
+        Serial.println(i);
+        delay(1000);
+      }
+
+      driver.stop();
     }
 
     else if (x == '4')
@@ -51,8 +63,9 @@ void loop()
     else if (x == '5')
     {
       driver.stop();
+      jukebox.play(BASICBITCH);
     }
-    else if(x == '6')
-      jukebox.play(VITAELUX);
+    else if (x == '6')
+      jukebox.play(DESPACITO);
   }
 }

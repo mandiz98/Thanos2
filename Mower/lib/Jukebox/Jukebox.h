@@ -22,6 +22,7 @@
 #define LACUCARACHA 0
 #define DESPACITO 1
 #define VITAELUX 2
+#define BASICBITCH 3
 
 //note length
 #define FULL 800

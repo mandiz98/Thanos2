@@ -37,7 +37,6 @@ public:
     void Drive(int speed);
     void Turn(int direction);
     void stop();
+    void test(int turnAngle);
 };
-void driving();
-
 #endif
