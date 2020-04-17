@@ -3,51 +3,56 @@
 #include <Wire.h>
 #include "MeAuriga.h"
 #include <MotorCommands.h>
+#include <Jukebox.h>
 
 #define BUZZER_PORT 45
 
 //includes and port mapping for the makeblock library.
 MeBuzzer buzzer(BUZZER_PORT);
 MeUltrasonicSensor us(PORT_10);
-MeBluetooth bt(PORT_3);
 MotorCommands driver;
+Jukebox jukebox;
 
-
-void setup() {
-  // put your setup code here, to run once:
+// put your setup code here, to run once:
+void setup()
+{
   Serial.begin(115200);
-  bt.begin(115200);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  if(Serial.available())
+ // put your main code here, to run repeatedly:
+void loop()
+{
+  if (Serial.available())
   {
-    char x = Serial.read();
-    if(x == '1')
-      {
-        driver.Drive(180);
-        buzzer.tone(BUZZER_PORT, 440, 100);
-        
-      }
-    else if(x == '2')
-      {
-        
-      }
-      
-    else if(x == '3')
+    //Serial.write("Hej erik");
+    //delay(100);
+    byte x = Serial.read();
+    x = char(x);
+    if (x == '1')
     {
-      
+      //laCucaracha();
+      driver.Drive(280);
+    }
+    else if (x == '2')
+    {
+      driver.Turn(LEFT);
     }
 
-    else if(x == '4')
+    else if (x == '3')
+    {
+      driver.Turn(RIGHT);
+    }
+
+    else if (x == '4')
     {
       driver.Drive(-180);
     }
 
-    else if(x == '5')
+    else if (x == '5')
     {
       driver.stop();
-    }   
+    }
+    else if(x == '6')
+      jukebox.play(VITAELUX);
   }
 }

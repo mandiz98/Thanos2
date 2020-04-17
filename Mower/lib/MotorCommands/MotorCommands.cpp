@@ -11,6 +11,7 @@
  * 
  *      1. void MotorCommands::Drive(int speed);
  *      2. void MotorCommands::stop();
+ *      3. void MotorCommands::Turn(int direction);
 */
 #include "MotorCommands.h"
 
@@ -36,7 +37,22 @@ void MotorCommands::stop()
     _motor2.setMotorPwm(0);
 }
 
-void driving()
+void MotorCommands::Turn(int direction)
 {
-
+    if(direction == LEFT)
+    {
+        _motor1.setMotorPwm(-150);
+        _motor2.setMotorPwm(-150);
+    }
+    else if(direction == RIGHT)
+    {
+        _motor1.setMotorPwm(150);
+        _motor2.setMotorPwm(150);
+    }
+    else
+    {
+        _motor1.setMotorPwm(0);
+        _motor2.setMotorPwm(0);
+    }
+    
 }

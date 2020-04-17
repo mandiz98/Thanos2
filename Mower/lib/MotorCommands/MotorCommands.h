@@ -11,6 +11,7 @@
  * 
  *      1. void MotorCommands::Drive(int speed);
  *      2. void MotorCommands::stop();
+ *      3. void MotorCommands::Turn(int direction);
 */
 #ifndef MotorCommands_H
 #define MotorCommands_H
@@ -19,6 +20,9 @@
 #include <MeEncoderMotor.h>
 #include <MePort.h>
 #include <MeConfig.h>
+
+#define LEFT 1
+#define RIGHT 2
 
 class MotorCommands
 {
@@ -31,6 +35,7 @@ public:
     MotorCommands();
     ~MotorCommands();
     void Drive(int speed);
+    void Turn(int direction);
     void stop();
 };
 void driving();
