@@ -7,7 +7,10 @@ import {
   Text,
   StatusBar,
   TouchableOpacity,
-  Image
+  Image,
+  NativeModules,
+  NativeEventEmitter,
+  AppState
 } from 'react-native';
 import Colors from "../Colors"
 
@@ -27,6 +30,9 @@ const characteristicID = '347f7608-2e2d-47eb-913b-75d4edc4de3b'
 const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 const baudRate = 115200;
 
+const BleManagerModule = NativeModules.BleManager;
+const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
+
 
 export class Connect extends React.Component {
 
@@ -35,51 +41,45 @@ export class Connect extends React.Component {
 
     this.onClick = this.onClick.bind(this);
     this.writeBtn = this.writeBtn.bind(this);
+
+
+    this.handleUpdateValueForCharacteristic = this.handleUpdateValueForCharacteristic.bind(this);
+
+  }
+
+  handleUpdateValueForCharacteristic(data) {
+    console.log("Read success: ", String.fromCharCode.apply(null, data.value))
   }
 
   async writeBtn(){
     console.log("----------------------------------------------------")
-    //const data = stringToBytes('1')
-    //console.log(data)
 
-    /* BleManager.retrieveServices(MAC).then((peripheralInfo) => {
-      //console.log(peripheralInfo)
 
+    AppState.addEventListener('change', this.handleAppStateChange);
+
+    BleManager.start({showAlert: false});
+
+    this.handlerUpdate = bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateValueForCharacteristic );
+
+
+
+
+
+
+
+    BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+                  
       setTimeout(() => {
-        BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+        BleManager.startNotification(MAC, "ffe1", "ffe2").then(() => {
           console.log('Started notification on ' + MAC);
-          setTimeout(() => {
-            BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-              console.log("Success Write");
-              
-            }).catch((e) => {
-              console.log(e)
-            });
-
-          }, 500);
+          
         }).catch((error) => {
           console.log('Notification error', error);
         });
-      }, 200);
-    }); */
-
-    BleManager.retrieveServices(MAC).then((peripheralInfo) => {
-      //console.log(peripheralInfo)
-    
-      
-        BleManager.read(MAC, "ffe1", "ffe3").then((result) => {
-          
-          console.log("Read success: ", result)
-  
-          console.log("Read success: ", String.fromCharCode.apply(null, result))
-          
-        })
-        .catch((e) => {
-          console.log(e, "HJÄLP")
-        })
-
-    
+      }, 0);
     });
+
+  
 }
 
   async onClick(){
