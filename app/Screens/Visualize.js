@@ -49,6 +49,18 @@ export class Visualize extends React.Component {
         })
     }
 
+    async postLocation(){
+        axios.post(url + "/newLocation")
+        .then((result) => {
+            console.log(result.data[1]._id)
+             
+            this.setState({listData: result.data.reverse()})
+        })
+        .catch((e) => {
+            console.log(e)
+        })
+    }
+
     async loadVisualization(){
         console.log("hej")
     }

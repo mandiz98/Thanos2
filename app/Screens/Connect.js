@@ -21,10 +21,12 @@ import BleManager from "react-native-ble-manager"
 import { stringToBytes } from 'convert-string';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+//Robot
 const MAC = '00:1B:10:65:FA:CC'
-const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
+const characteristicID = '347f7608-2e2d-47eb-913b-75d4edc4de3b'
 const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 const baudRate = 115200;
+
 
 export class Connect extends React.Component {
 
@@ -63,24 +65,22 @@ export class Connect extends React.Component {
 
     BleManager.retrieveServices(MAC).then((peripheralInfo) => {
       //console.log(peripheralInfo)
+    
+      
+        BleManager.read(MAC, "ffe1", "ffe3").then((result) => {
+          
+          console.log("Read success: ", result)
+  
+          console.log("Read success: ", String.fromCharCode.apply(null, result))
+          
+        })
+        .catch((e) => {
+          console.log(e, "HJÄLP")
+        })
 
-      setTimeout(() => {
-        BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-          console.log('Started notification on ' + MAC);
-          setTimeout(() => {
-            BleManager.read(MAC, "ffe1", "ffe2").then((result) => {
-              console.log(result, "hakdnka")
-            })
-            .catch((e) => {
-              console.log(e, "vad skriver mBot? DISARNA knows")
-            })
-          }, 500);
-        }).catch((error) => {
-          console.log('Notification error', error);
-        });
-      }, 200);
+    
     });
-  }
+}
 
   async onClick(){
 

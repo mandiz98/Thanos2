@@ -12,12 +12,15 @@ import Colors from "../Colors"
 import { stringToBytes } from 'convert-string';
 import BleManager from "react-native-ble-manager"
 
-
 import Icon from 'react-native-vector-icons/Ionicons';
 
+//Robot
 const MAC = '00:1B:10:65:FA:CC'
 const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
 const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
+
+
+
 
 export class Controller extends React.Component {
     
@@ -30,6 +33,7 @@ export class Controller extends React.Component {
         this.clickRight = this.clickRight.bind(this);
         this.clickAuto = this.clickAuto.bind(this);
       }
+
 
       // är det rätt?
       async clickUp(){
@@ -140,6 +144,7 @@ export class Controller extends React.Component {
             <View style = {styles.container}>
                 <View style = {styles.box}>
 
+                
                 </View>
                 <View style = {styles.row}>
                     <StatusBar backgroundColor = {Colors.purple} />

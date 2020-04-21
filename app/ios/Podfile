@@ -59,6 +59,7 @@ target 'Thanos2' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
   target 'Thanos2Tests' do
     inherit! :complete
     # Pods for testing
