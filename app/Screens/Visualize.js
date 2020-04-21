@@ -12,6 +12,11 @@ import {
 import Colors from "../Colors"
 import axios from "axios"
 
+import Svg, {
+    Circle,
+    Line
+} from 'react-native-svg'
+
 //List of dates
 const url = "http://thanos2api.herokuapp.com"
 
@@ -24,7 +29,9 @@ export class Visualize extends React.Component {
         this.getSessions = this.getSessions.bind(this);
 
         this.state = {
-            listData: []
+            listData: [],
+            locations: [],
+            collisions: []
         }   
     }
 
@@ -40,9 +47,11 @@ export class Visualize extends React.Component {
     async getSessions(){
         axios.get(url + "/sessions")
         .then((result) => {
-            console.log(result.data[1]._id)
+            console.log("1 ",result.data[0].startDate)
+            console.log("2 ",result.data[1].startDate)
+            console.log("test", new Date(result.data[2].startDate) - new Date(result.data[1].startDate))
              
-            this.setState({listData: result.data.reverse()})
+            this.setState({listData: result.data.sort(function(a,b){return new Date(b.startDate) - new Date(a.startDate)})})
         })
         .catch((e) => {
             console.log(e)
@@ -61,16 +70,40 @@ export class Visualize extends React.Component {
         })
     }
 
-    async loadVisualization(){
-        console.log("hej")
+    async loadVisualization(session){
+        console.log(session)
+        let temp = url + "/session/" + session._id
+        console.log(temp)
+        axios.get(temp)
+        .then((result) =>{
+            console.log(result.data);
+            this.setState({locations: result.data.locations});
+            this.setState({collisions: result.data.collisions});
+        })
+        .catch((e) => {
+            console.log(e)
+        })
     }
 
     fixTimeFormat(date){
 
-        var finishedDate = "Date: " + date.getUTCFullYear() + "/" + date.getMonth() + "/" + date.getDay() + ". Time: " + date.getUTCHours() + ":" + date.getUTCMinutes();
-        
+        var finishedDate = "Date: " + date.getUTCFullYear() + "-" + date.getMonth() + "-" + date.getDate() + ". Time: " + date.getUTCHours() + ":" + date.getUTCMinutes();
+        //var finishedDate = date.replace('T','\t').replace()
         return finishedDate
     }
+    
+    //SVG help functions
+    /*makeCircle = function(x,y,r,color){
+        var circle = document.createElementNS(`http://www.w3.org/2000/svg`, `circle`);
+        circle.setAttribute(`cx`, x);
+        circle.setAttribute(`cy`, y);
+        circle.setAttribute(`r`, r);
+        circle.setAttribute(`fill`, color);
+    
+        return circle;
+    }*/
+
+    
 
     render(){
         return(
@@ -79,9 +112,9 @@ export class Visualize extends React.Component {
                 
                     <ScrollView>
                         {this.state.listData.map((data, index) => 
-                            <TouchableOpacity key={index} onPress={this.loadVisualization}>
+                            <TouchableOpacity key={index} onPress={() => this.loadVisualization(data)}>
                                 <View style={styles.item}>
-                                    <Text style = {styles.text}>{this.fixTimeFormat(new Date(Date.parse(data.startDate)))}</Text>
+                                    <Text style = {styles.text}>{this.fixTimeFormat(new Date(data.startDate))}</Text>
                                 </View>
                             </TouchableOpacity>
                         )}
@@ -89,7 +122,28 @@ export class Visualize extends React.Component {
 
                 </View>
                 <View style={styles.container2}>
-
+                    <Svg>
+                        {this.state.locations.map((data, index) => 
+                            <Circle
+                                key={data._id}
+                                cx={data.x}
+                                cy={data.y}
+                                r="5"
+                                fill="black"
+                            />
+                        )}
+                        {this.state.collisions.map((data, index) => 
+                            <Circle
+                                key={data._id}
+                                cx={data.x}
+                                cy={data.y}
+                                r="10d"
+                                fill="red"
+                            />
+                        )}
+                    
+                        
+                    </Svg>
                 </View>
             </View>
         )
