@@ -36,69 +36,6 @@ const Visualize = (state) => {
         return finishedDate
     }
 
-    const adjustCoordinates = (layout) => {
-        
-        console.log(layout);
-        let viewProportions = layout.height/layout.width;
-
-        let xMin = Infinity;
-        let xMax = -Infinity;
-        let yMin = Infinity;
-        let yMax = -Infinity;
-
-        for(const location of locations){
-            if(location.x < xMin){
-                xMin = location.x
-            }
-            if(location.x > xMax){
-                xMax = location.x
-            }
-            if(location.y < yMin){
-                yMin = location.y
-            }
-            if(location.y > yMax){
-                yMax = location.y
-            }
-        }
-        for(const collision of collisions){
-            if(collision.x < xMin){
-                xMin = collision.x
-            }
-            if(collision.x > xMax){
-                xMax = collision.x
-            }
-            if(collision.y < yMin){
-                yMin = collision.y
-            }
-            if(collision.y > yMax){
-                yMax = collision.y
-            }
-        }
-
-        let coordHeight = yMax-yMin;
-        let coordWidth = xMax-xMin;
-        let coordProportions = coordHeight/coordWidth;
-
-        let factor;
-
-        if(viewProportions > coordProportions){
-            //view wider than coords
-            factor = layout.height/coordHeight;
-        }
-        else{
-            //view narrower than coords
-            factor = layout.width/coordWidth;
-        }
-
-        for(const location of locations){
-            location.x = factor*location.x - xMin;
-            location.y = factor*location.y - yMin;
-        }
-        for(const collision of collisions){
-            collision.x = factor*collision.x - xMin;
-            collision.y = factor*collision.y - yMin;
-        }
-    }
     const loadVisualization = (item) => {
         setLocations(item.locations)
         setCollisions(item.collisions)
@@ -120,7 +57,11 @@ const Visualize = (state) => {
                 />
 
                 </View>
-                <View style={styles.container2} /*onLayout={(event) => {adjustCoordinates(event.nativeEvent.layout)}}*/>
+                {/* TODO: Fixa scaling för SVGn. Får nog bli att anpassa koordinaterna efter en 1000x1000 kvadrat, sedan scala SVGn så:
+                 https://stackoverflow.com/questions/48602395/how-can-i-automatically-scale-an-svg-element-within-a-react-native-view
+                 
+                 Hade egentligen velat bevara aspect ratio (inte bara kvadrat), men vill inte lägga fler timmar på detta nu... */}
+                <View style={styles.container2}>
                     <Svg>
                         {locations.map((data, index) => 
                             <Circle
