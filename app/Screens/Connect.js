@@ -23,12 +23,17 @@ import {
 import BleManager from "react-native-ble-manager"
 import { stringToBytes } from 'convert-string';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from "axios"
+
 
 //Robot
 const MAC = '00:1B:10:65:FA:CC'
 const characteristicID = '347f7608-2e2d-47eb-913b-75d4edc4de3b'
 const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 const baudRate = 115200;
+const url = "http://thanos2api.herokuapp.com"
+
+
 
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
@@ -49,6 +54,48 @@ export class Connect extends React.Component {
 
   handleUpdateValueForCharacteristic(data) {
     console.log("Read success: ", String.fromCharCode.apply(null, data.value))
+
+    if(data.value[0] == '0'){
+      //Coordinates
+      console.log("Coordinates: ", data.value)
+
+    } else if (data.value[0] == '1' ) {
+      //Collision
+      console.log("Collision: ", data.value)
+
+    } else {
+      //error
+      console.log("Data not recognized: ",data.value)
+    }
+
+
+  }
+
+  async postLocation(x, y){
+    axios.post(url + "/sessions/id/location", {
+      x: x,
+      y: y
+    })
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+            
+  }
+
+  async postCollision(x, y){
+    axios.post(url + "/sessions/id/collision", {
+      x: x,
+      y: y
+    })
+    .then((response) => {
+      console.log(response)
+    })
+    .catch((error) => {
+      console.log(error)
+    })
   }
 
   async writeBtn(){
@@ -60,10 +107,6 @@ export class Connect extends React.Component {
     BleManager.start({showAlert: false});
 
     this.handlerUpdate = bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateValueForCharacteristic );
-
-
-
-
 
 
 
