@@ -4,7 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
-  FlatList
+  TouchableHighlight,
 } from 'react-native';
 import Colors from "../Colors"
 
@@ -13,6 +13,7 @@ import Svg, {
 } from 'react-native-svg'
 import { connect } from "react-redux"
 import { getSessions } from "../store/actions/sessions"
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 const Visualize = (state) => {
     useEffect(() => {
@@ -29,7 +30,7 @@ const Visualize = (state) => {
         x: null,
         y: null
     }])
-
+    
 
     const fixTimeFormat = (date) => {
         var finishedDate = "Date: " + date.getUTCFullYear() + "-" + date.getMonth() + "-" + date.getDate() + ". Time: " + date.getUTCHours() + ":" + date.getUTCMinutes();
@@ -103,20 +104,43 @@ const Visualize = (state) => {
         setLocations(item.locations)
         setCollisions(item.collisions)
     }
+    // TODO
+    const deleteItem = (item) => {
+        console.log("DELETED", item._id)
+    }
+
+    const renderHiddenItem = (data) => (
+        <View style={styles.rowBack}>
+            <TouchableOpacity
+                style={[styles.backRightBtn, styles.backRightBtnRight]}
+                onPress={() => deleteItem(data.item)}
+            >
+                <Text style={styles.backTextWhite}>Delete</Text>
+            </TouchableOpacity>
+        </View>
+    );
+
+    const renderItem = data => (
+        <TouchableHighlight
+            onPress={() => loadVisualization(data.item)}
+            underlayColor={'#fff'}
+        >
+            <View style={styles.item}>
+                <Text style={styles.text}>{fixTimeFormat(new Date(data.item.startDate))}</Text>
+            </View>
+        </TouchableHighlight>
+    );
 
     return(
         <View style={styles.body}>
             <View style={styles.container}>
-                <FlatList
+                <SwipeListView
                     data={state.sessions.sessions}
+                    renderItem={renderItem}
+                    renderHiddenItem={renderHiddenItem}
+                    rightOpenValue={-75}
                     keyExtractor={item => item._id}
-                    renderItem={({item}) =>(
-                        <TouchableOpacity onPress={() => loadVisualization(item)}>
-                            <View style={styles.item}>
-                                <Text style = {styles.text}>{fixTimeFormat(new Date(item.startDate))}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    )}
+                    
                 />
 
                 </View>
@@ -185,6 +209,32 @@ const styles = StyleSheet.create({
         color: Colors.white,
         fontWeight: "bold",
         textAlignVertical: "center"
-    }
+    },
+    backRightBtn: {
+        alignItems: 'center',
+        bottom: 0,
+        justifyContent: 'center',
+        position: 'absolute',
+        top: 0,
+        width: 75,
+    },
+    backRightBtnRight: {
+        marginEnd: 5,
+        backgroundColor: 'red',
+        right: 0,
+    },
+    backTextWhite: {
+        color: '#FFF',
+    },
+    rowBack: {
+        margin: 5,
+        borderRadius: 5,
+        alignItems: 'center',
+        backgroundColor: 'red',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 15,
+    },
 })
 
