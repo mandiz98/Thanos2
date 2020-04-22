@@ -45,8 +45,8 @@ export class Connect extends React.Component {
     super(props)
 
     this.onClick = this.onClick.bind(this);
-    this.writeBtn = this.writeBtn.bind(this);
-
+    this.startRead = this.startRead.bind(this);
+    this.thanosClicked = this.thanosClicked.bind(this);
 
     this.handleUpdateValueForCharacteristic = this.handleUpdateValueForCharacteristic.bind(this);
 
@@ -55,24 +55,32 @@ export class Connect extends React.Component {
   handleUpdateValueForCharacteristic(data) {
     console.log("Read success: ", String.fromCharCode.apply(null, data.value))
 
-    if(data.value[0] == '0'){
+    if(String.fromCharCode(data.value[0]) == '0'){
       //Coordinates
       console.log("Coordinates: ", data.value)
+      var x,y
+      var arr = String.fromCharCode.apply(null, data.value).split(",")
+      x = arr[1]
+      y = arr[2]
+      this.postLocation(x,y)
 
-    } else if (data.value[0] == '1' ) {
+    } else if (String.fromCharCode(data.value[0]) == '1' ) {
       //Collision
       console.log("Collision: ", data.value)
+      var x,y
+      var arr = String.fromCharCode.apply(null, data.value).split(",")
+      x = arr[1]
+      y = arr[2]
+      this.postCollision(x,y)
 
-    } else {
-      //error
-      console.log("Data not recognized: ",data.value)
     }
 
 
   }
 
   async postLocation(x, y){
-    axios.post(url + "/sessions/id/location", {
+    var id = "5e970bb6336b2a37c97d7aee"
+    axios.post(url + "/session/"+id+"/locations", {
       x: x,
       y: y
     })
@@ -86,7 +94,8 @@ export class Connect extends React.Component {
   }
 
   async postCollision(x, y){
-    axios.post(url + "/sessions/id/collision", {
+    var id = "5e970bb6336b2a37c97d7aee"
+    axios.post(url + "/session/"+id+"/collisions", {
       x: x,
       y: y
     })
@@ -98,7 +107,11 @@ export class Connect extends React.Component {
     })
   }
 
-  async writeBtn(){
+  async thanosClicked(){
+    console.log("hallååå")
+  }
+
+  async startRead(){
     console.log("----------------------------------------------------")
 
 
@@ -143,12 +156,14 @@ export class Connect extends React.Component {
       console.log(isConnected)
     })
 
+    this.startRead();
+
   }
 
   render(){
     return (
       <View>
-        <TouchableOpacity onPress={this.writeBtn}>
+        <TouchableOpacity onPress={this.thanosClicked}>
         <Image source={require('../images/thanos.png')} style={styles.logo }/>
         </TouchableOpacity>
 
