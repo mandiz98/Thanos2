@@ -1,98 +1,42 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar,
   TouchableOpacity,
   FlatList
 } from 'react-native';
 import Colors from "../Colors"
-import axios from "axios"
 
 import Svg, {
     Circle,
-    Line
 } from 'react-native-svg'
+import { connect } from "react-redux"
+import { getSessions } from "../store/actions/sessions"
 
-//List of dates
-const url = "http://thanos2api.herokuapp.com"
+const Visualize = (state) => {
+    useEffect(() => {
+        state.getSessions()
+    }, [state.getSessions])
 
-export class Visualize extends React.Component {
-    
-    constructor(props){
-        super(props)
-    
-        this.loadVisualization = this.loadVisualization.bind(this);
-        this.getSessions = this.getSessions.bind(this);
+    const [locations, setLocations] = useState([{
+        _id: "",
+        x: null,
+        y: null,
+    }])
+    const [collisions, setCollisions] = useState([{
+        _id: "",
+        x: null,
+        y: null
+    }])
 
-        this.state = {
-            listData: [],
-            locations: [],
-            collisions: []
-        }   
-    }
 
-    componentDidMount(){
-
-        this.getSessions();
-
-        this.props.navigation.addListener('focus', () => {
-            this.getSessions()
-        })
-    }
-
-    async getSessions(){
-        axios.get(url + "/sessions")
-        .then((result) => {
-            console.log("1 ",result.data[0].startDate)
-            console.log("2 ",result.data[1].startDate)
-            console.log("test", new Date(result.data[2].startDate) - new Date(result.data[1].startDate))
-             
-            this.setState({listData: result.data.sort(function(a,b){return new Date(b.startDate) - new Date(a.startDate)})})
-        })
-        .catch((e) => {
-            console.log(e)
-        })
-    }
-
-    async postLocation(){
-        axios.post(url + "/newLocation")
-        .then((result) => {
-            console.log(result.data[1]._id)
-             
-            this.setState({listData: result.data.reverse()})
-        })
-        .catch((e) => {
-            console.log(e)
-        })
-    }
-
-    async loadVisualization(session){
-        console.log(session)
-        let temp = url + "/session/" + session._id
-        console.log(temp)
-        axios.get(temp)
-        .then((result) =>{
-            console.log(result.data);
-            this.setState({locations: result.data.locations});
-            this.setState({collisions: result.data.collisions});
-        })
-        .catch((e) => {
-            console.log(e)
-        })
-    }
-
-    fixTimeFormat(date){
-
+    const fixTimeFormat = (date) => {
         var finishedDate = "Date: " + date.getUTCFullYear() + "-" + date.getMonth() + "-" + date.getDate() + ". Time: " + date.getUTCHours() + ":" + date.getUTCMinutes();
-        //var finishedDate = date.replace('T','\t').replace()
         return finishedDate
     }
 
-    adjustCoordinates(layout){
+    const adjustCoordinates = (layout) => {
         
         console.log(layout);
         let viewProportions = layout.height/layout.width;
@@ -102,7 +46,7 @@ export class Visualize extends React.Component {
         let yMin = Infinity;
         let yMax = -Infinity;
 
-        for(const location of this.state.locations){
+        for(const location of locations){
             if(location.x < xMin){
                 xMin = location.x
             }
@@ -116,7 +60,7 @@ export class Visualize extends React.Component {
                 yMax = location.y
             }
         }
-        for(const collision of this.state.collisions){
+        for(const collision of collisions){
             if(collision.x < xMin){
                 xMin = collision.x
             }
@@ -146,48 +90,39 @@ export class Visualize extends React.Component {
             factor = layout.width/coordWidth;
         }
 
-        for(const location of this.state.locations){
+        for(const location of locations){
             location.x = factor*location.x - xMin;
             location.y = factor*location.y - yMin;
         }
-        for(const collision of this.state.collisions){
+        for(const collision of collisions){
             collision.x = factor*collision.x - xMin;
             collision.y = factor*collision.y - yMin;
         }
     }
-    
-    //SVG help functions
-    /*makeCircle = function(x,y,r,color){
-        var circle = document.createElementNS(`http://www.w3.org/2000/svg`, `circle`);
-        circle.setAttribute(`cx`, x);
-        circle.setAttribute(`cy`, y);
-        circle.setAttribute(`r`, r);
-        circle.setAttribute(`fill`, color);
-    
-        return circle;
-    }*/
+    const loadVisualization = (item) => {
+        setLocations(item.locations)
+        setCollisions(item.collisions)
+    }
 
-    
-
-    render(){
-        return(
-            <View style={styles.body}>
-                <View style={styles.container}>
-                
-                    <ScrollView>
-                        {this.state.listData.map((data, index) => 
-                            <TouchableOpacity key={index} onPress={() => this.loadVisualization(data)}>
-                                <View style={styles.item}>
-                                    <Text style = {styles.text}>{this.fixTimeFormat(new Date(data.startDate))}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                    </ScrollView>
+    return(
+        <View style={styles.body}>
+            <View style={styles.container}>
+                <FlatList
+                    data={state.sessions.sessions}
+                    keyExtractor={item => item._id}
+                    renderItem={({item}) =>(
+                        <TouchableOpacity onPress={() => loadVisualization(item)}>
+                            <View style={styles.item}>
+                                <Text style = {styles.text}>{fixTimeFormat(new Date(item.startDate))}</Text>
+                            </View>
+                        </TouchableOpacity>
+                    )}
+                />
 
                 </View>
-                <View style={styles.container2} onLayout={(event) => {this.adjustCoordinates(event.nativeEvent.layout)}}>
+                <View style={styles.container2} /*onLayout={(event) => {adjustCoordinates(event.nativeEvent.layout)}}*/>
                     <Svg>
-                        {this.state.locations.map((data, index) => 
+                        {locations.map((data, index) => 
                             <Circle
                                 key={data._id}
                                 cx={data.x}
@@ -196,23 +131,26 @@ export class Visualize extends React.Component {
                                 fill="black"
                             />
                         )}
-                        {this.state.collisions.map((data, index) => 
+                        {collisions.map((data, index) => 
                             <Circle
                                 key={data._id}
                                 cx={data.x}
                                 cy={data.y}
-                                r="10d"
+                                r="10"
                                 fill="red"
                             />
                         )}
-                    
-                        
                     </Svg>
-                </View>
             </View>
-        )
-    }
+        </View>
+    )
 }
+
+const mapStateToProps = state => ({
+    sessions: state.sessions
+})
+
+export default connect(mapStateToProps, {getSessions})(Visualize)
 
 const styles = StyleSheet.create({
     body: {
@@ -249,3 +187,4 @@ const styles = StyleSheet.create({
         textAlignVertical: "center"
     }
 })
+

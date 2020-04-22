@@ -1,0 +1,2 @@
+export const SESSIONS = "SESSIONS"
+export const CURRENTSESSION = "CURRENTSESSION"
