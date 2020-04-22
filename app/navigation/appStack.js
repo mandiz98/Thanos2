@@ -2,8 +2,8 @@ import React from "react"
 import { createStackNavigator } from "@react-navigation/stack"
 
 import { Connect } from '../Screens/Connect';
-import { Controller } from '../Screens/Controller';
-import { Visualize } from '../Screens/Visualize';
+import Controller from '../Screens/Controller';
+import Visualize from '../Screens/Visualize';
 
 const stack = createStackNavigator()
 

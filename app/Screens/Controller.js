@@ -6,13 +6,15 @@ import {
   View,
   Text,
   StatusBar,
-  TouchableOpacity 
+  TouchableOpacity,
+  ToastAndroid
 } from 'react-native';
 import Colors from "../Colors"
 import { stringToBytes } from 'convert-string';
 import BleManager from "react-native-ble-manager"
-
 import Icon from 'react-native-vector-icons/Ionicons';
+import {startSession, stopSession} from "../store/actions/sessions"
+import {connect} from "react-redux"
 
 //Robot
 const MAC = '00:1B:10:65:FA:CC'
@@ -22,16 +24,18 @@ const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 
 
 
-export class Controller extends React.Component {
+class Controller extends React.Component {
     
     constructor(props){
         super(props)
-    
+        props
         this.clickUp = this.clickUp.bind(this);
         this.clickLeft = this.clickLeft.bind(this);
         this.clickDown = this.clickDown.bind(this);
         this.clickRight = this.clickRight.bind(this);
         this.clickAuto = this.clickAuto.bind(this);
+        this.clickStart= this.clickStart.bind(this);
+        this.clickStop= this.clickStop.bind(this);
       }
 
 
@@ -135,8 +139,16 @@ export class Controller extends React.Component {
 
       }
 
+      async clickStop(){
+        this.props.stopSession(this.props.sessions.currentSessionId)
+        ToastAndroid.show(`Session Stopped`, ToastAndroid.SHORT)
+      }
       async clickAuto(){
-
+        console.log("current", this.props.sessions.currentSessionId)
+      }
+      async clickStart(){
+        this.props.startSession()
+        ToastAndroid.show(`Session Started`, ToastAndroid.SHORT)
       }
 
     render(){
@@ -165,8 +177,16 @@ export class Controller extends React.Component {
                             <Icon style={styles.leftBtn} name={"ios-arrow-back"} color={Colors.white} size={2} />
                         </TouchableOpacity>
 
+                        <TouchableOpacity onPress={this.clickStart}>
+                            <Text> START </Text>
+                        </TouchableOpacity>
+                        
                         <TouchableOpacity onPress={this.clickAuto}>
-                            <Text style={styles.autoBtn}> AUTO </Text>
+                            <Text> AUTO </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={this.clickStop}>
+                            <Text> STOP </Text>
                         </TouchableOpacity>
                         
                     </View>
@@ -182,8 +202,11 @@ export class Controller extends React.Component {
     }
 };
 
+const mapStateToProps = state => ({
+  sessions: state.sessions
+})
 
-
+export default connect(mapStateToProps, {startSession, stopSession})(Controller)
 
 const styles = StyleSheet.create({
     container: {
