@@ -91,6 +91,70 @@ export class Visualize extends React.Component {
         //var finishedDate = date.replace('T','\t').replace()
         return finishedDate
     }
+
+    adjustCoordinates(layout){
+        
+        console.log(layout);
+        let viewProportions = layout.height/layout.width;
+
+        let xMin = Infinity;
+        let xMax = -Infinity;
+        let yMin = Infinity;
+        let yMax = -Infinity;
+
+        for(const location of this.state.locations){
+            if(location.x < xMin){
+                xMin = location.x
+            }
+            if(location.x > xMax){
+                xMax = location.x
+            }
+            if(location.y < yMin){
+                yMin = location.y
+            }
+            if(location.y > yMax){
+                yMax = location.y
+            }
+        }
+        for(const collision of this.state.collisions){
+            if(collision.x < xMin){
+                xMin = collision.x
+            }
+            if(collision.x > xMax){
+                xMax = collision.x
+            }
+            if(collision.y < yMin){
+                yMin = collision.y
+            }
+            if(collision.y > yMax){
+                yMax = collision.y
+            }
+        }
+
+        let coordHeight = yMax-yMin;
+        let coordWidth = xMax-xMin;
+        let coordProportions = coordHeight/coordWidth;
+
+        let factor;
+
+        if(viewProportions > coordProportions){
+            //view wider than coords
+            factor = layout.height/coordHeight;
+        }
+        else{
+            //view narrower than coords
+            factor = layout.width/coordWidth;
+        }
+
+        for(const location of this.state.locations){
+            location.x = factor*location.x - xMin;
+            location.y = factor*location.y - yMin;
+        }
+        for(const collision of this.state.collisions){
+            collision.x = factor*collision.x - xMin;
+            collision.y = factor*collision.y - yMin;
+        }
+    }
     
     //SVG help functions
     /*makeCircle = function(x,y,r,color){
@@ -121,7 +185,7 @@ export class Visualize extends React.Component {
                     </ScrollView>
 
                 </View>
-                <View style={styles.container2}>
+                <View style={styles.container2} onLayout={(event) => {this.adjustCoordinates(event.nativeEvent.layout)}}>
                     <Svg>
                         {this.state.locations.map((data, index) => 
                             <Circle
