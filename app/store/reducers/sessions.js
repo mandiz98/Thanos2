@@ -1,8 +1,8 @@
-import {SESSIONS, CURRENTSESSION} from "../actions/types"
+import {SESSIONS, STARTSESSION, STOPSESSION} from "../actions/types"
 
 const initialState = {
     sessions: [],
-    currentSession: {}
+    currentSessionId: "",
 }
 
 export default function(state = initialState, action){
@@ -10,17 +10,21 @@ export default function(state = initialState, action){
         type,
         payload
     } = action
-
     switch(type){
         case SESSIONS:
             return{
                 ...state,
                 sessions: payload
             }
-        case CURRENTSESSION:
+        case STARTSESSION:
             return{
                 ...state,
-                currentSession: payload
+                currentSessionId: payload,
+            }
+        case STOPSESSION:
+            return{
+                sessions: [...state.sessions, payload],
+                currentSessionId: "",
             }
         default:
             return state
