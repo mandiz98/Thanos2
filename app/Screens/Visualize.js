@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {ToastAndroid, useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -12,7 +12,7 @@ import Svg, {
     Circle,
 } from 'react-native-svg'
 import { connect } from "react-redux"
-import { getSessions } from "../store/actions/sessions"
+import { getSessions, deleteSession } from "../store/actions/sessions"
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const Visualize = (state) => {
@@ -43,7 +43,8 @@ const Visualize = (state) => {
     }
     // TODO
     const deleteItem = (item) => {
-        console.log("DELETED", item._id)
+        state.deleteSession(item._id)
+        //ToastAndroid.show(`Deleted`, ToastAndroid.SHORT)
     }
 
     const renderHiddenItem = (data) => (
@@ -115,7 +116,7 @@ const mapStateToProps = state => ({
     sessions: state.sessions
 })
 
-export default connect(mapStateToProps, {getSessions})(Visualize)
+export default connect(mapStateToProps, {getSessions, deleteSession})(Visualize)
 
 const styles = StyleSheet.create({
     body: {

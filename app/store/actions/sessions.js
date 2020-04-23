@@ -1,4 +1,4 @@
-import {SESSIONS, STARTSESSION, STOPSESSION, } from "./types"
+import {SESSIONS, STARTSESSION, STOPSESSION, DELETE} from "./types"
 import axios from "axios"
 const url = "http://thanos2api.herokuapp.com"
 
@@ -23,6 +23,20 @@ export const stopSession = (id) => async dispatch => {
         dispatch({
             type: STOPSESSION,
             payload: res.data
+        })
+    }catch(err){
+        console.error("startSession", err)
+    }
+}
+
+export const deleteSession = (id) => async dispatch => {
+    try {
+        const deleteUrl = url + "/session/" + id + "/delete"
+        const res = await axios.post(deleteUrl)
+        console.log(id)
+        dispatch({
+            type: DELETE,
+            payload: id
         })
     }catch(err){
         console.error("startSession", err)

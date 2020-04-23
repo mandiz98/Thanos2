@@ -140,8 +140,12 @@ class Controller extends React.Component {
       }
 
       async clickStop(){
-        this.props.stopSession(this.props.sessions.currentSessionId)
-        ToastAndroid.show(`Session Stopped`, ToastAndroid.SHORT)
+        let currentId = this.props.sessions.currentSessionId
+        if(currentId != ""){
+          this.props.stopSession(currentId)
+          ToastAndroid.show(`Session Stopped`, ToastAndroid.SHORT)
+        }
+        ToastAndroid.show(`Start a session first`, ToastAndroid.SHORT)
       }
       async clickAuto(){
         console.log("current", this.props.sessions.currentSessionId)

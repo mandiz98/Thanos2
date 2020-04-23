@@ -1,4 +1,4 @@
-import {SESSIONS, STARTSESSION, STOPSESSION} from "../actions/types"
+import {SESSIONS, STARTSESSION, STOPSESSION, DELETE} from "../actions/types"
 
 const initialState = {
     sessions: [],
@@ -25,6 +25,11 @@ export default function(state = initialState, action){
             return{
                 sessions: [...state.sessions, payload],
                 currentSessionId: "",
+            }
+        case DELETE:
+            return{
+                ...state,
+                sessions: state.sessions.filter(sessions => payload !== sessions._id)
             }
         default:
             return state
