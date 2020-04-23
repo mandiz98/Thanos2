@@ -69,6 +69,90 @@ const Visualize = (state) => {
         </TouchableHighlight>
     );
 
+    const fixCoordinates = (locations, collisions) => {
+        if(locations.length < 2){
+            console.log("bad data")
+            //fixa den if-satsen kanske, men funkar for now
+            return({
+                locations: [{}],
+                collisions: [{}],
+                aspectRatio: 1
+            });
+        }
+
+        let xMin = Infinity;
+        let xMax = -Infinity;
+        let yMin = Infinity;
+        let yMax = -Infinity;
+
+        for(const location of locations){
+            if(location.x < xMin){
+                xMin = location.x;
+            }
+            if(location.x > xMax){
+                xMax = location.x;
+            }
+            if(location.y < yMin){
+                yMin = location.y;
+            }
+            if(location.y > yMax){
+                yMax = location.y;
+            }
+        }
+        for(const collision of collisions){
+            if(collision.x < xMin){
+                xMin = collision.x;
+            }
+            if(collision.x > xMax){
+                xMax = collision.x;
+            }
+            if(collision.y < yMin){
+                yMin = collision.y;
+            }
+            if(collision.y > yMax){
+                yMax = collision.y;
+            }
+        }
+
+        let xDiff = xMax-xMin;
+        let yDiff = yMax-yMin;
+
+        let aspectRatio = xDiff/yDiff;
+
+        const width = 1000*Math.sqrt(aspectRatio);
+        const height = 1000/Math.sqrt(aspectRatio);
+
+        
+
+        const xMargin = 0.1*width;
+        const yMargin = 0.1*height;
+        //on each side
+
+        const xFactor = (width - 2*xMargin)/xDiff;
+        const yFactor = (height - 2*yMargin)/yDiff;
+
+        let newLocations = locations;
+        let newCollisions = collisions;
+
+        for(const location of newLocations){
+            location.x = (location.x - xMin) * xFactor + xMargin;
+            location.y = (location.y - yMin) * yFactor + yMargin;
+        }
+        for(const collision of newCollisions){
+            collision.x = (collision.x - xMin) * xFactor + xMargin;
+            collision.y = (collision.y - yMin) * yFactor + yMargin;
+        }
+
+        
+        let returnObject = {
+            locations: newLocations,
+            collisions: newCollisions,
+            aspectRatio: aspectRatio
+        };
+        console.log(returnObject);
+        return returnObject;
+    };
+
     return(
         <View style={styles.body}>
             <View style={styles.container}>
@@ -85,28 +169,39 @@ const Visualize = (state) => {
                 {/* TODO: Fixa scaling för SVGn. Får nog bli att anpassa koordinaterna efter en 1000x1000 kvadrat, sedan scala SVGn så:
                  https://stackoverflow.com/questions/48602395/how-can-i-automatically-scale-an-svg-element-within-a-react-native-view
                  
-                 Hade egentligen velat bevara aspect ratio (inte bara kvadrat), men vill inte lägga fler timmar på detta nu... */}
-                <View style={styles.container2}>
-                    <Svg>
-                        {locations.map((data, index) => 
-                            <Circle
-                                key={data._id}
-                                cx={data.x}
-                                cy={data.y}
-                                r="5"
-                                fill="black"
-                            />
-                        )}
-                        {collisions.map((data, index) => 
-                            <Circle
-                                key={data._id}
-                                cx={data.x}
-                                cy={data.y}
-                                r="10"
-                                fill="red"
-                            />
-                        )}
-                    </Svg>
+                 Hade egentligen velat bevara aspect ratio (inte bara kvadrat), men vill inte lägga fler timmar på detta nu... JO DET VILL JAG VISST!!!*/}
+            <View style={styles.container2}>
+                <View>
+                    <View style={{
+                        width: '100%',
+                        height: '100%',
+                        alignItems: 'center'
+                    }}
+                    >
+                        {/* <View style={{ aspectRatio: fixCoordinates(locations, collisions).aspectRatio, backgroundColor: 'blue' }}> */}
+                            <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)} ${1000/Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)}`}>
+                                {fixCoordinates(locations, collisions).locations.map((data, index) =>
+                                    <Circle
+                                        key={data._id}
+                                        cx={data.x}
+                                        cy={data.y}
+                                        r="20"
+                                        fill="black"
+                                    />
+                                )}
+                                {fixCoordinates(locations, collisions).collisions.map((data, index) =>
+                                    <Circle
+                                        key={data._id}
+                                        cx={data.x}
+                                        cy={data.y}
+                                        r="40"
+                                        fill="red"
+                                    />
+                                )}
+                            </Svg>
+                        {/* </View> */}
+                    </View>
+                </View>
             </View>
         </View>
     )
