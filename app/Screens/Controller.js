@@ -36,8 +36,20 @@ class Controller extends React.Component {
         this.clickAuto = this.clickAuto.bind(this);
         this.clickStart= this.clickStart.bind(this);
         this.clickStop= this.clickStop.bind(this);
+        this.sessionRunning= this.sessionRunning.bind(this);
+
       }
 
+
+      sessionRunning(){
+        let currentId = this.props.sessions.currentSessionId
+
+        if(currentId != ""){
+          return true
+        }else{
+          return false
+        }
+      }
 
       // är det rätt?
       async clickUp(){
@@ -162,6 +174,23 @@ class Controller extends React.Component {
 
                 
                 </View>
+
+                <View style={styles.menuBar}>
+                
+                  { this.sessionRunning() ? <TouchableOpacity onPress={this.clickStop}>
+                      <Text style={styles.stopSession}> STOP </Text>
+                  </TouchableOpacity> : <TouchableOpacity onPress={this.clickStart}>
+                      <Text style={styles.startSession}> START </Text>
+                  </TouchableOpacity> }
+                  
+                  
+                  
+                  <TouchableOpacity onPress={this.clickAuto}>
+                      <Text style={styles.autoBtn}> AUTO </Text>
+                  </TouchableOpacity>
+
+                </View>
+                
                 <View style = {styles.row}>
                     <StatusBar backgroundColor = {Colors.purple} />
                     
@@ -172,29 +201,16 @@ class Controller extends React.Component {
                     </View>
 
                     <View style={styles.leftRightView} >
+                      <TouchableOpacity onPress={this.clickRight}>
+                          <Icon style={styles.rightBtn} name={"ios-arrow-forward"} color={Colors.white} size={2} />
+                      </TouchableOpacity>
 
-                        <TouchableOpacity onPress={this.clickRight}>
-                            <Icon style={styles.rightBtn} name={"ios-arrow-forward"} color={Colors.white} size={2} />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={this.clickLeft}>
-                            <Icon style={styles.leftBtn} name={"ios-arrow-back"} color={Colors.white} size={2} />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={this.clickStart}>
-                            <Text> START </Text>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity onPress={this.clickAuto}>
-                            <Text> AUTO </Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={this.clickStop}>
-                            <Text> STOP </Text>
-                        </TouchableOpacity>
-                        
+                      <TouchableOpacity onPress={this.clickLeft}>
+                          <Icon style={styles.leftBtn} name={"ios-arrow-back"} color={Colors.white} size={2} />
+                      </TouchableOpacity>                      
                     </View>
-                
+
+                    
                     <View style={styles.downView}>
                         <TouchableOpacity  onPress={this.clickDown}>
                             <Icon style={styles.downBtn} name={"ios-arrow-down"} color={Colors.white} size={2} />
@@ -226,6 +242,14 @@ const styles = StyleSheet.create({
     },
     leftRightView: {
         flexDirection: "row-reverse",
+
+    },
+    menuBar:{
+        flexDirection: "row",
+        backgroundColor: Colors.purple,
+        height: 60,
+        alignItems:"center",
+        alignContent: "space-between",
     },
     upView: {
         alignSelf: "flex-end",
@@ -287,15 +311,47 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     autoBtn: {
-        fontSize: 30,
-        borderWidth: 2,
-        height: 50,
-        color: Colors.white,
-        backgroundColor: Colors.lavender,
-        textAlign: "center",
-        textAlignVertical: "center",
-        borderRadius: 10,
-        borderColor: Colors.white,
-        marginRight: 100
+      fontSize: 30,
+      borderWidth: 2,
+      height: 50,
+      color: Colors.white,
+      backgroundColor: Colors.lavender,
+      textAlign: "center",
+      textAlignVertical: "center",
+      borderRadius: 10,
+      borderColor: Colors.white,
+      margin: "2%",
+      paddingLeft: "10%",
+      paddingRight: "10%",
+    },
+    startSession: {
+      fontSize: 30,
+      borderWidth: 2,
+      height: 50,
+      color: Colors.white,
+      backgroundColor: Colors.lavender,
+      textAlign: "center",
+      textAlignVertical: "center",
+      borderRadius: 10,
+      borderColor: Colors.white,
+      margin: "2%",
+      marginLeft: "3%",
+      paddingLeft: "10%",
+      paddingRight: "10%"
+    },
+    stopSession:{
+      fontSize: 30,
+      borderWidth: 2,
+      height: 50,
+      color: Colors.white,
+      backgroundColor: Colors.lavender,
+      textAlign: "center",
+      textAlignVertical: "center",
+      borderRadius: 10,
+      borderColor: Colors.white,
+      margin: "2%",
+      marginLeft: "5%",
+      paddingLeft: "10%",
+      paddingRight: "10%"
     }
   });
