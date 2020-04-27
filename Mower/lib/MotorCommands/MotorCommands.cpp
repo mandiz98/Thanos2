@@ -58,18 +58,26 @@ void MotorCommands::Turn(int direction)
 
 void MotorCommands::test(int turnAngle)
 {
-    _motor1.setMotorPwm(-180);
-    _motor2.setMotorPwm(180);
-
+    if(turnAngle >= 0 && turnAngle < 180)
+    {
+        _motor1.setMotorPwm(-180);
+        _motor2.setMotorPwm(180);
+    }
+    else
+    {
+        _motor1.setMotorPwm(180);
+        _motor2.setMotorPwm(-180);
+    }
+    
     if(turnAngle < 90 && turnAngle >= 0)
     {
         if(turnAngle <= 30)
             _motor1.setMotorPwm(0);
         else
-            {
-                int turn = (90 - turnAngle) * 2;
-                _motor1.setMotorPwm(-180 + turn);
-            }
+        {
+            int turn = (90 - turnAngle) * 2;
+            _motor1.setMotorPwm(-180 + turn);
+        }
     }
     else if(turnAngle > 90 && turnAngle <=180)
     {
@@ -79,6 +87,26 @@ void MotorCommands::test(int turnAngle)
         {
             int turn = (turnAngle - 90) * 2;
             _motor2.setMotorPwm(180 - turn);
+        }
+    }
+    else if(turnAngle > 180 && turnAngle <= 270)
+    {
+        if(turnAngle <= 210)
+            _motor2.setMotorPwm(0);
+        else
+        {
+            int turn = (270 - turnAngle) * 2;
+            _motor2.setMotorPwm(-180 + turn);
+        }
+    }
+    else if(turnAngle > 270 && turnAngle <= 360)
+    {
+        if(turnAngle >= 330)
+            _motor1.setMotorPwm(0);
+        else
+        {
+            int turn = (360 - turnAngle) * 2;
+            _motor1.setMotorPwm(180 - turn);
         }
     }
 }
