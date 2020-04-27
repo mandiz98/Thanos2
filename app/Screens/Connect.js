@@ -24,6 +24,8 @@ import BleManager from "react-native-ble-manager"
 import { stringToBytes } from 'convert-string';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from "axios"
+import {connect} from "react-redux"
+
 
 
 //Robot
@@ -32,6 +34,7 @@ const characteristicID = '347f7608-2e2d-47eb-913b-75d4edc4de3b'
 const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 const baudRate = 115200;
 const url = "http://thanos2api.herokuapp.com"
+var prevX, prevY, prevCollX, prevCollY
 
 
 
@@ -39,7 +42,7 @@ const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
 
-export class Connect extends React.Component {
+class Connect extends React.Component {
 
   constructor(props){
     super(props)
@@ -55,31 +58,54 @@ export class Connect extends React.Component {
   handleUpdateValueForCharacteristic(data) {
     console.log("Read success: ", String.fromCharCode.apply(null, data.value))
 
-    if(String.fromCharCode(data.value[0]) == '0'){
-      //Coordinates
-      console.log("Coordinates: ", data.value)
-      var x,y
-      var arr = String.fromCharCode.apply(null, data.value).split(",")
-      x = arr[1]
-      y = arr[2]
-      this.postLocation(x,y)
+    let currentId = this.props.sessions.currentSessionId
 
-    } else if (String.fromCharCode(data.value[0]) == '1' ) {
-      //Collision
-      console.log("Collision: ", data.value)
-      var x,y
-      var arr = String.fromCharCode.apply(null, data.value).split(",")
-      x = arr[1]
-      y = arr[2]
-      this.postCollision(x,y)
+    if(currentId != ""){
+      if(String.fromCharCode(data.value[0]) == '0'){
+        //Coordinates
+        console.log("Coordinates: ", data.value)
+        var x,y
+        var arr = String.fromCharCode.apply(null, data.value).split(",")
+        x = arr[1]
+        y = arr[2]
 
+        if(x != prevX && y != prevY){
+          this.postLocation(x,y)
+        }else{
+          console.log("Robot is not moving")
+        }
+
+        prevX = x
+        prevY = y
+
+  
+      } else if (String.fromCharCode(data.value[0]) == '1' ) {
+        //Collision
+        console.log("Collision: ", data.value)
+        var x,y
+        var arr = String.fromCharCode.apply(null, data.value).split(",")
+        x = arr[1]
+        y = arr[2]
+        
+        if(x != prevCollX && y != prevCollY){
+          this.postCollision(x,y)
+        }else{
+          console.log("Same collison")
+        }
+
+        prevCollX = x
+        prevCollY = y
+  
+      }
+    }else{
+      console.log("No session running!")
     }
 
 
   }
 
   async postLocation(x, y){
-    var id = "5e970bb6336b2a37c97d7aee"
+    var id = this.props.sessions.currentSessionId;
     axios.post(url + "/session/"+id+"/locations", {
       x: x,
       y: y
@@ -94,7 +120,7 @@ export class Connect extends React.Component {
   }
 
   async postCollision(x, y){
-    var id = "5e970bb6336b2a37c97d7aee"
+    var id = this.props.sessions.currentSessionId;
     axios.post(url + "/session/"+id+"/collisions", {
       x: x,
       y: y
@@ -176,6 +202,13 @@ export class Connect extends React.Component {
   }
   
 };
+
+
+const mapStateToProps = state => ({
+  sessions: state.sessions
+})
+
+export default connect(mapStateToProps)(Connect)
 
 const styles = StyleSheet.create({
   connectBtn: {
