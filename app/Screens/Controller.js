@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {startSession, stopSession} from "../store/actions/sessions"
 import {connect} from "react-redux"
 
+
 //Robot
 const MAC = '00:1B:10:65:FA:CC'
 const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
@@ -38,8 +39,8 @@ class Controller extends React.Component {
         this.clickStop= this.clickStop.bind(this);
         this.sessionRunning= this.sessionRunning.bind(this);
 
-      }
 
+      }
 
       sessionRunning(){
         let currentId = this.props.sessions.currentSessionId
@@ -170,9 +171,11 @@ class Controller extends React.Component {
     render(){
         return(
             <View style = {styles.container}>
-                <View style = {styles.box}>
 
                 
+                <View style = {styles.box}>
+
+                  
                 </View>
 
                 <View style={styles.menuBar}>

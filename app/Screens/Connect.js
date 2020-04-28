@@ -28,6 +28,7 @@ import {connect} from "react-redux"
 
 
 
+
 //Robot
 const MAC = '00:1B:10:65:FA:CC'
 const characteristicID = '347f7608-2e2d-47eb-913b-75d4edc4de3b'
@@ -54,6 +55,8 @@ class Connect extends React.Component {
     this.handleUpdateValueForCharacteristic = this.handleUpdateValueForCharacteristic.bind(this);
 
   }
+
+
 
   handleUpdateValueForCharacteristic(data) {
     console.log("Read success: ", String.fromCharCode.apply(null, data.value))
@@ -88,6 +91,7 @@ class Connect extends React.Component {
         y = arr[2]
         
         if(x != prevCollX && y != prevCollY){
+          alert("Collision at X:"+x+", Y:"+y)
           this.postCollision(x,y)
         }else{
           console.log("Same collison")
