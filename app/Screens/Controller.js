@@ -24,7 +24,6 @@ const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 
 
 
-
 class Controller extends React.Component {
     
     constructor(props){
@@ -34,18 +33,30 @@ class Controller extends React.Component {
         this.clickLeft = this.clickLeft.bind(this);
         this.clickDown = this.clickDown.bind(this);
         this.clickRight = this.clickRight.bind(this);
-        this.clickAuto = this.clickAuto.bind(this);
         this.clickStart= this.clickStart.bind(this);
         this.clickStop= this.clickStop.bind(this);
         this.sessionRunning= this.sessionRunning.bind(this);
+        this.startAuto= this.startAuto.bind(this);
+        this.startManual= this.startManual.bind(this);
+        this.autoRunning= this.autoRunning.bind(this);
 
-
+        this.state = {
+          mode: 'a'
+        }
       }
 
       sessionRunning(){
         let currentId = this.props.sessions.currentSessionId
 
         if(currentId != ""){
+          return true
+        }else{
+          return false
+        }
+      }
+
+      autoRunning(){
+        if(this.state.mode != 'm'){
           return true
         }else{
           return false
@@ -128,7 +139,7 @@ class Controller extends React.Component {
       }
 
       async clickDown(){
-        const data = stringToBytes('5');
+        const data = stringToBytes('4');
 
         BleManager.retrieveServices(MAC).then((peripheralInfo) => {
                   
@@ -152,21 +163,120 @@ class Controller extends React.Component {
 
       }
 
+      async startAuto(){
+        this.setState({mode: 'a'})
+        const data = stringToBytes('a');
+
+        BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+                  
+            setTimeout(() => {
+              BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+                console.log('Started notification on ' + MAC);
+                setTimeout(() => {
+                  BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
+                    console.log("Success Write");
+                    
+                  }).catch((e) => {
+                    console.log(e)
+                  });
+      
+                }, 0);
+              }).catch((error) => {
+                console.log('Notification error', error);
+              });
+            }, 0);
+          });
+      }
+
+      async startManual(){
+        this.setState({mode: 'm'})
+        const data = stringToBytes('m');
+
+        BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+                  
+            setTimeout(() => {
+              BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+                console.log('Started notification on ' + MAC);
+                setTimeout(() => {
+                  BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
+                    console.log("Success Write");
+                    
+                  }).catch((e) => {
+                    console.log(e)
+                  });
+      
+                }, 0);
+              }).catch((error) => {
+                console.log('Notification error', error);
+              });
+            }, 0);
+          });
+      }
+
+      async stopAll(){
+        const data = stringToBytes('s');
+
+        BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+                  
+            setTimeout(() => {
+              BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+                console.log('Started notification on ' + MAC);
+                setTimeout(() => {
+                  BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
+                    console.log("Success Write");
+                    
+                  }).catch((e) => {
+                    console.log(e)
+                  });
+      
+                }, 0);
+              }).catch((error) => {
+                console.log('Notification error', error);
+              });
+            }, 0);
+          });
+      }
+
       async clickStop(){
         let currentId = this.props.sessions.currentSessionId
         if(currentId != ""){
+          this.stopAll()
           this.props.stopSession(currentId)
           ToastAndroid.show(`Session Stopped`, ToastAndroid.SHORT)
+        }else{
+          ToastAndroid.show(`Start a session first`, ToastAndroid.SHORT)
         }
-        ToastAndroid.show(`Start a session first`, ToastAndroid.SHORT)
-      }
-      async clickAuto(){
-        console.log("current", this.props.sessions.currentSessionId)
       }
       async clickStart(){
         this.props.startSession()
         ToastAndroid.show(`Session Started`, ToastAndroid.SHORT)
+        this.startAuto()
       }
+
+      async break(){
+        const data = stringToBytes('0');
+
+        BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+                  
+            setTimeout(() => {
+              BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+                console.log('Started notification on ' + MAC);
+                setTimeout(() => {
+                  BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
+                    console.log("Success Write");
+                    
+                  }).catch((e) => {
+                    console.log(e)
+                  });
+      
+                }, 0);
+              }).catch((error) => {
+                console.log('Notification error', error);
+              });
+            }, 0);
+          });
+      }
+
 
     render(){
         return(
@@ -174,8 +284,7 @@ class Controller extends React.Component {
 
                 
                 <View style = {styles.box}>
-
-                  
+                                    
                 </View>
 
                 <View style={styles.menuBar}>
@@ -187,10 +296,12 @@ class Controller extends React.Component {
                   </TouchableOpacity> }
                   
                   
-                  
-                  <TouchableOpacity onPress={this.clickAuto}>
+                  { this.autoRunning() ? <TouchableOpacity onPress={this.startManual}>
+                      <Text style={styles.manBtn}> MANUAL </Text>
+                  </TouchableOpacity> : <TouchableOpacity onPress={this.startAuto}>
                       <Text style={styles.autoBtn}> AUTO </Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> }
+
 
                 </View>
                 
@@ -204,13 +315,18 @@ class Controller extends React.Component {
                     </View>
 
                     <View style={styles.leftRightView} >
+
                       <TouchableOpacity onPress={this.clickRight}>
                           <Icon style={styles.rightBtn} name={"ios-arrow-forward"} color={Colors.white} size={2} />
                       </TouchableOpacity>
 
                       <TouchableOpacity onPress={this.clickLeft}>
                           <Icon style={styles.leftBtn} name={"ios-arrow-back"} color={Colors.white} size={2} />
-                      </TouchableOpacity>                      
+                      </TouchableOpacity>          
+
+                      <TouchableOpacity onPress={this.break}>
+                            <Text style={styles.stopBtn}>STOP</Text>
+                      </TouchableOpacity>            
                     </View>
 
                     
@@ -251,17 +367,14 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         backgroundColor: Colors.purple,
         height: 60,
-        alignItems:"center",
-        alignContent: "space-between",
+        justifyContent:"center"
     },
     upView: {
         alignSelf: "flex-end",
-        marginEnd: 85,
-        marginTop: 20
+        marginTop: "5%"
     },
     downView: {
         alignSelf: "flex-end",
-        marginEnd: 85,
     },
     leftBtn: {
         alignSelf: "flex-end",
@@ -273,6 +386,7 @@ const styles = StyleSheet.create({
         height: 50,
         textAlign: "center",
         borderRadius: 10,
+        marginEnd: "5%",
         textAlignVertical: "center"
     },
     rightBtn: {
@@ -286,8 +400,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         borderRadius: 10,
         textAlignVertical: "center",
-        marginEnd: 40,
-        marginStart: 40
+        marginEnd: "20%"
     },
     upBtn: {
         fontSize: 30,
@@ -297,8 +410,8 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         textAlign: "center",
+        marginEnd: "20%",
         borderRadius: 10,
-        marginTop: 20,
         textAlignVertical: "center"
     },
     downBtn: {
@@ -311,10 +424,11 @@ const styles = StyleSheet.create({
         textAlign: "center",
         borderRadius: 10,
         textAlignVertical: "center",
-        marginBottom: 20
+        marginBottom: "15%",
+        marginEnd: "20%"
     },
     autoBtn: {
-      fontSize: 30,
+      fontSize: 22,
       borderWidth: 2,
       height: 50,
       color: Colors.white,
@@ -327,8 +441,8 @@ const styles = StyleSheet.create({
       paddingLeft: "10%",
       paddingRight: "10%",
     },
-    startSession: {
-      fontSize: 30,
+    manBtn: {
+      fontSize: 22,
       borderWidth: 2,
       height: 50,
       color: Colors.white,
@@ -338,12 +452,25 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       borderColor: Colors.white,
       margin: "2%",
-      marginLeft: "3%",
+      paddingLeft: "6%",
+      paddingRight: "6%",
+    },
+    startSession: {
+      fontSize: 22,
+      borderWidth: 2,
+      height: 50,
+      color: Colors.white,
+      backgroundColor: Colors.lavender,
+      textAlign: "center",
+      textAlignVertical: "center",
+      borderRadius: 10,
+      borderColor: Colors.white,
+      margin: "2%",
       paddingLeft: "10%",
       paddingRight: "10%"
     },
     stopSession:{
-      fontSize: 30,
+      fontSize: 22,
       borderWidth: 2,
       height: 50,
       color: Colors.white,
@@ -353,8 +480,19 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       borderColor: Colors.white,
       margin: "2%",
-      marginLeft: "5%",
       paddingLeft: "10%",
       paddingRight: "10%"
+    },
+    stopBtn: {
+      fontSize: 22,
+      borderWidth: 2,
+      height: 50,
+      color: Colors.white,
+      backgroundColor: Colors.lavender,
+      textAlign: "center",
+      textAlignVertical: "center",
+      borderRadius: 10,
+      borderColor: Colors.white,
+      marginEnd: "20%"
     }
   });
