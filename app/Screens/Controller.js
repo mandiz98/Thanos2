@@ -254,7 +254,7 @@ class Controller extends React.Component {
       }
 
       async break(){
-        const data = stringToBytes('0');
+        const data = stringToBytes('b');
 
         BleManager.retrieveServices(MAC).then((peripheralInfo) => {
                   
