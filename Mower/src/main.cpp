@@ -5,11 +5,13 @@
 //#include <MotorCommands.h>
 #include <Jukebox.h>
 #include <MeGyro.h>
-#include "autopilot.h"
+//#include "autopilot.h"
+#include "manual.h"
 
 
 Jukebox jukebox;
 MeGyro gyroscope(1, 0x69);
+byte x;
 
 enum DRIVE_MODE
 {
@@ -20,6 +22,7 @@ enum DRIVE_MODE
 DRIVE_MODE CURRENT_MODE = DM_STOP;
 
 void autopilot(void);
+void manualMode(char x);
 
 // put your setup code here, to run once:
 void setup()
@@ -44,24 +47,27 @@ void loop()
     //Serial.println(angle);   
     //Serial.println((us.distanceCm() < 10));
     //delay(200);
-    byte x = Serial.read();
+    x = Serial.read();
     x = char(x);
-    if (x == '1')
+    if (x == 'a')
     {
       //driver.Drive(180);
       CURRENT_MODE = AUTOPILOT;
       autopilotMode = START;
     }
+
+    else if(x == 'm')
+    {
+      CURRENT_MODE = MANUAL;
+    }
     
-    else if (x == '5')
+    else if (x == '6')
     {
       driver.stop();
       jukebox.play(DESPACITO);
     }
-    else if (x == '6')
+    else if (x == 's')
      CURRENT_MODE = DM_STOP;
-
-  
   }
 
   switch (CURRENT_MODE)
@@ -72,6 +78,10 @@ void loop()
 
   case AUTOPILOT:
     autopilot();
+    break;
+
+  case MANUAL:
+    manualMode(x);
     break;
 
   default:
