@@ -6,7 +6,7 @@ import Controller from '../Screens/Controller';
 import Visualize from '../Screens/Visualize';
 
 const stack = createStackNavigator()
-
+//Create stack for connect screen
 export function ConnectScreenStack(){
     return(
         <stack.Navigator>
@@ -19,7 +19,7 @@ export function ConnectScreenStack(){
         </stack.Navigator>
     )
 }
-
+//Create stack for controller screen
 export function ControllerScreenStack(){
     return(
         <stack.Navigator>
@@ -32,7 +32,7 @@ export function ControllerScreenStack(){
         </stack.Navigator>
     )
 }
-
+//Create stack for visualize screen
 export function VisualizeScreenStack(){
     return(
         <stack.Navigator>

@@ -5,10 +5,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 
 const Tabs = createBottomTabNavigator()
-
+//The function for the bottom tab navigator
 export default function TabNavigator(){
     return(
         <Tabs.Navigator
+            //Style of tabs
             initialRouteName="connect"
             tabBarOptions={{
                 activeTintColor: 'white',
@@ -17,6 +18,7 @@ export default function TabNavigator(){
                 inactiveBackgroundColor: "#6F3C89"
             }}
         >
+            {/* Three buttons in bottom navigation bar with icons */}
             <Tabs.Screen name="connect" component={ConnectScreenStack} options={{
                 tabBarLabel: 'Connect',
                 tabBarIcon: ({ color, size }) => (

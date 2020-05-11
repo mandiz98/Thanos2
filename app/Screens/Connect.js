@@ -1,3 +1,4 @@
+//Imports
 import React from 'react';
 import {
   SafeAreaView,
@@ -29,49 +30,44 @@ import {connect} from "react-redux"
 
 
 
-//Robot
+// MAC address of robot 
 const MAC = '00:1B:10:65:FA:CC'
-const characteristicID = '347f7608-2e2d-47eb-913b-75d4edc4de3b'
-const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
-const baudRate = 115200;
+//Backend API link
 const url = "http://thanos2api.herokuapp.com"
+// Global constant variables 
 var prevX, prevY, prevCollX, prevCollY
-
-
-
+// BLE modules
 const BleManagerModule = NativeModules.BleManager;
 const bleManagerEmitter = new NativeEventEmitter(BleManagerModule);
 
-
+//Connect class is used to connect to the robot over BLE
 class Connect extends React.Component {
 
   constructor(props){
     super(props)
-
+    //Binding the function to "this" property
     this.onClick = this.onClick.bind(this);
     this.startRead = this.startRead.bind(this);
     this.thanosClicked = this.thanosClicked.bind(this);
-
     this.handleUpdateValueForCharacteristic = this.handleUpdateValueForCharacteristic.bind(this);
-
   }
 
 
-
+  //Event listener that listens for data from the robot
   handleUpdateValueForCharacteristic(data) {
     console.log("Read success: ", String.fromCharCode.apply(null, data.value))
-
+    //Fetch the current session id if it exists
     let currentId = this.props.sessions.currentSessionId
-
+    //Only read the data if there is an active session 
     if(currentId != ""){
+      //If the recieved data string starts with a 0 it is a normal location. E.g. "0,34,76"
       if(String.fromCharCode(data.value[0]) == '0'){
-        //Coordinates
         console.log("Coordinates: ", data.value)
         var x,y
         var arr = String.fromCharCode.apply(null, data.value).split(",")
         x = arr[1]
         y = arr[2]
-
+        //Post location to the backend if the robot is moving
         if(x != prevX && y != prevY){
           this.postLocation(x,y)
         }else{
@@ -81,7 +77,7 @@ class Connect extends React.Component {
         prevX = x
         prevY = y
 
-  
+        //If the recieved data string starts with a 1 it is a collision location. E.g. "1,34,76"
       } else if (String.fromCharCode(data.value[0]) == '1' ) {
         //Collision
         console.log("Collision: ", data.value)
@@ -89,7 +85,7 @@ class Connect extends React.Component {
         var arr = String.fromCharCode.apply(null, data.value).split(",")
         x = arr[1]
         y = arr[2]
-        
+        //Post location of the collision to the backend and alert the user
         if(x != prevCollX && y != prevCollY){
           alert("Collision at X:"+x+", Y:"+y)
           this.postCollision(x,y)
@@ -100,14 +96,13 @@ class Connect extends React.Component {
         prevCollX = x
         prevCollY = y
   
-      }
+        }
     }else{
       console.log("No session running!")
     }
-
-
   }
 
+  //Post the location coordinates to the backend
   async postLocation(x, y){
     var id = this.props.sessions.currentSessionId;
     axios.post(url + "/session/"+id+"/locations", {
@@ -122,7 +117,7 @@ class Connect extends React.Component {
     })
             
   }
-
+  //Post the collision coordinates to the backend
   async postCollision(x, y){
     var id = this.props.sessions.currentSessionId;
     axios.post(url + "/session/"+id+"/collisions", {
@@ -136,23 +131,39 @@ class Connect extends React.Component {
       console.log(error)
     })
   }
-
+  //The robot starts playing Despasito to cheer up the people around it
   async thanosClicked(){
-    console.log("hallååå")
-  }
+    const data = stringToBytes('6');
 
+    BleManager.retrieveServices(MAC).then((peripheralInfo) => {
+              
+      setTimeout(() => {
+        BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+          console.log('Started notification on ' + MAC);
+          setTimeout(() => {
+            BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
+              console.log("Success Write");
+              
+            }).catch((e) => {
+              console.log(e)
+            });
+
+          }, 0);
+        }).catch((error) => {
+          console.log('Notification error', error);
+        });
+      }, 0);
+    });
+  }
+  //Starts the event listener thats reads data from the robot
   async startRead(){
     console.log("----------------------------------------------------")
 
-
     AppState.addEventListener('change', this.handleAppStateChange);
-
     BleManager.start({showAlert: false});
-
+    //Add event listener
     this.handlerUpdate = bleManagerEmitter.addListener('BleManagerDidUpdateValueForCharacteristic', this.handleUpdateValueForCharacteristic );
-
-
-
+    //Start services for the MAC address
     BleManager.retrieveServices(MAC).then((peripheralInfo) => {
                   
       setTimeout(() => {
@@ -164,39 +175,38 @@ class Connect extends React.Component {
         });
       }, 0);
     });
-
-  
-}
-
+  }
+  //Start the BLE connection with the robot
   async onClick(){
-
+    //Start the module
     await BleManager.start({showAlert: false})
     .then(() => {
       // Success code
       console.log('Module initialized');
     });
-
-     await BleManager.connect(MAC)
+    //Connect
+    await BleManager.connect(MAC)
     .catch((e) => {
       console.log(e)
     })
-
+    //Get peripherals
     await BleManager.isPeripheralConnected(MAC)
     .then((isConnected) => {
       console.log(isConnected)
     })
-
+    //Start Listener
     this.startRead();
-
   }
 
   render(){
     return (
       <View>
+        {/* Thanos button */}
         <TouchableOpacity onPress={this.thanosClicked}>
         <Image source={require('../images/thanos.png')} style={styles.logo }/>
         </TouchableOpacity>
 
+        {/* Connect button */}
         <TouchableOpacity style={styles.connectBtn} onPress={this.onClick}>
           <Text style={{fontSize: 40, color: Colors.white}}>Connect</Text>
           <Icon color={Colors.lightBlue} name={"ios-bluetooth"} size = {50} style= {styles.bt}/>
@@ -207,13 +217,14 @@ class Connect extends React.Component {
   
 };
 
-
+//Map the state sessions to sessions
 const mapStateToProps = state => ({
   sessions: state.sessions
 })
 
 export default connect(mapStateToProps)(Connect)
 
+//Custom styles
 const styles = StyleSheet.create({
   connectBtn: {
     alignSelf: "center",

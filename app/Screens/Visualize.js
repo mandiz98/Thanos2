@@ -1,3 +1,4 @@
+//Imports
 import React, {ToastAndroid, useEffect, useState} from 'react';
 import {
   StyleSheet,

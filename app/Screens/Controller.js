@@ -1,3 +1,4 @@
+//Imports
 import React from 'react';
 import {
   SafeAreaView,
@@ -17,18 +18,19 @@ import {startSession, stopSession} from "../store/actions/sessions"
 import {connect} from "react-redux"
 
 
-//Robot
+//MAC address, CHaracteristic id and service id of robot
 const MAC = '00:1B:10:65:FA:CC'
 const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
 const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 
 
-
+//Controller class is used to start a new session and navigate the robot
 class Controller extends React.Component {
     
     constructor(props){
         super(props)
         props
+        //Binding the function to "this" property
         this.clickUp = this.clickUp.bind(this);
         this.clickLeft = this.clickLeft.bind(this);
         this.clickDown = this.clickDown.bind(this);
@@ -39,12 +41,13 @@ class Controller extends React.Component {
         this.startAuto= this.startAuto.bind(this);
         this.startManual= this.startManual.bind(this);
         this.autoRunning= this.autoRunning.bind(this);
-
+        //mode can either be a=auto or m=manual
         this.state = {
           mode: 'a'
         }
       }
 
+      //Check if a session is running
       sessionRunning(){
         let currentId = this.props.sessions.currentSessionId
 
@@ -54,7 +57,7 @@ class Controller extends React.Component {
           return false
         }
       }
-
+      //Check if the robot is in autonomous mode
       autoRunning(){
         if(this.state.mode != 'm'){
           return true
@@ -63,31 +66,31 @@ class Controller extends React.Component {
         }
       }
 
-      // är det rätt?
+      //Makes the robot go forward 
       async clickUp(){
         const data = stringToBytes('1');
 
         BleManager.retrieveServices(MAC).then((peripheralInfo) => {
                   
-            setTimeout(() => {
-              BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
-                setTimeout(() => {
-                  BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
-                    
-                  }).catch((e) => {
-                    console.log(e)
-                  });
-      
-                }, 0);
-              }).catch((error) => {
-                console.log('Notification error', error);
-              });
-            }, 0);
-          });
+          setTimeout(() => {
+            BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
+              console.log('Started notification on ' + MAC);
+              setTimeout(() => {
+                BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
+                  console.log("Success Write");
+                  
+                }).catch((e) => {
+                  console.log(e)
+                });
+    
+              }, 0);
+            }).catch((error) => {
+              console.log('Notification error', error);
+            });
+          }, 0);
+        });
       }
-
+      //Makes the robot go left
       async clickLeft(){
         const data = stringToBytes('2');
 
@@ -112,7 +115,7 @@ class Controller extends React.Component {
           });
         
       }
-
+      //Makes the robot go right
       async clickRight(){
         const data = stringToBytes('3');
 
@@ -137,7 +140,7 @@ class Controller extends React.Component {
           });
           
       }
-
+      //Makes the robot go backwards
       async clickDown(){
         const data = stringToBytes('4');
 
@@ -162,7 +165,7 @@ class Controller extends React.Component {
           });
 
       }
-
+      //Start the auto mode of the robot
       async startAuto(){
         this.setState({mode: 'a'})
         const data = stringToBytes('a');
@@ -187,7 +190,7 @@ class Controller extends React.Component {
             }, 0);
           });
       }
-
+      //Start the manual mode of the robot
       async startManual(){
         this.setState({mode: 'm'})
         const data = stringToBytes('m');
@@ -212,7 +215,7 @@ class Controller extends React.Component {
             }, 0);
           });
       }
-
+      //Stop the robot from moving completely
       async stopAll(){
         const data = stringToBytes('s');
 
@@ -236,7 +239,7 @@ class Controller extends React.Component {
             }, 0);
           });
       }
-
+      //Stopp the session and post the end timestamp to backend
       async clickStop(){
         let currentId = this.props.sessions.currentSessionId
         if(currentId != ""){
@@ -247,12 +250,13 @@ class Controller extends React.Component {
           ToastAndroid.show(`Start a session first`, ToastAndroid.SHORT)
         }
       }
+      //Create a new session in the backend and start the auto mode of the robot
       async clickStart(){
         this.props.startSession()
         ToastAndroid.show(`Session Started`, ToastAndroid.SHORT)
         this.startAuto()
       }
-
+      //Break the robot which means that it stops moving for the moment
       async break(){
         const data = stringToBytes('b');
 
@@ -282,20 +286,19 @@ class Controller extends React.Component {
         return(
             <View style = {styles.container}>
 
-                
                 <View style = {styles.box}>
                                     
                 </View>
 
                 <View style={styles.menuBar}>
-                
+                  {/* Start and Stop button for the session */}
                   { this.sessionRunning() ? <TouchableOpacity onPress={this.clickStop}>
                       <Text style={styles.stopSession}> STOP </Text>
                   </TouchableOpacity> : <TouchableOpacity onPress={this.clickStart}>
                       <Text style={styles.startSession}> START </Text>
                   </TouchableOpacity> }
                   
-                  
+                  {/* Switch between manual and auto mode button */}
                   { this.autoRunning() ? <TouchableOpacity onPress={this.startManual}>
                       <Text style={styles.manBtn}> MANUAL </Text>
                   </TouchableOpacity> : <TouchableOpacity onPress={this.startAuto}>
@@ -304,7 +307,7 @@ class Controller extends React.Component {
 
 
                 </View>
-                
+                {/* Manual Controller buttons */}
                 <View style = {styles.row}>
                     <StatusBar backgroundColor = {Colors.purple} />
                     
@@ -341,12 +344,14 @@ class Controller extends React.Component {
     }
 };
 
+//Map the state sessions to sessions
 const mapStateToProps = state => ({
   sessions: state.sessions
 })
 
 export default connect(mapStateToProps, {startSession, stopSession})(Controller)
 
+//Custom styles
 const styles = StyleSheet.create({
     container: {
         flex: 1,        
