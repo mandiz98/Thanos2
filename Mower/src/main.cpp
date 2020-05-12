@@ -2,16 +2,15 @@
 #include <SoftwareSerial.h>
 #include <Wire.h>
 #include "MeAuriga.h"
-//#include <MotorCommands.h>
 #include <Jukebox.h>
 #include <MeGyro.h>
-//#include "autopilot.h"
 #include "manual.h"
 
 
 Jukebox jukebox;
-MeGyro gyroscope(1, 0x69);
+//MeGyro gyroscope(1, 0x69);
 byte x;
+bool manualStartFlag = false;
 
 enum DRIVE_MODE
 {
@@ -37,10 +36,8 @@ void loop()
 {
   /*gyroscope.fast_update();
   double angle = gyroscope.getAngleZ();
-  if(angle < 90 && angle > 0)
-    driver.Turn(LEFT);
-  else
-    driver.stop();*/
+  if(Serial.available())
+    Serial.println(angle);*/
   //use serial read to determine mode, use switch case to set mower to correct mode, variable CURRENT_MODE
   if (Serial.available())
   {
@@ -59,6 +56,7 @@ void loop()
     else if(x == 'm')
     {
       CURRENT_MODE = MANUAL;
+      manualStartFlag = true;
     }
     
     else if (x == '6')
@@ -68,6 +66,7 @@ void loop()
     }
     else if (x == 's')
      CURRENT_MODE = DM_STOP;
+    delay(1);
   }
 
   switch (CURRENT_MODE)
@@ -81,6 +80,11 @@ void loop()
     break;
 
   case MANUAL:
+    if(manualStartFlag)
+    {
+      driver.stop();
+      manualStartFlag = false;
+    }
     manualMode(x);
     break;
 
