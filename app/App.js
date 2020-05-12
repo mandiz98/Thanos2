@@ -10,8 +10,10 @@ const middleware = [thunk]
 
 import sessions from "./store/reducers/sessions"
 
+// This is a helper function that will combine multiple reducers to pass into createStore.
 const rootReducer = combineReducers({sessions});
 
+// Creates redux store that holds the state
 const store = createStore(rootReducer, initialState, composeWithDevTools(applyMiddleware(...middleware)));
 
 

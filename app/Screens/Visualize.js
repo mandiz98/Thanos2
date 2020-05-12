@@ -17,10 +17,12 @@ import { getSessions, deleteSession } from "../store/actions/sessions"
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const Visualize = (state) => {
+    // Calls the redux action "getSessions"
     useEffect(() => {
         state.getSessions()
     }, [state.getSessions])
 
+    // Initial states of locations and collisions
     const [locations, setLocations] = useState([{
         _id: "",
         x: null,
@@ -38,16 +40,18 @@ const Visualize = (state) => {
         return finishedDate
     }
 
+    // This will update the locations and collisions state of this react component
     const loadVisualization = (item) => {
         setLocations(item.locations)
         setCollisions(item.collisions)
     }
-    // TODO
+
+    // Removes a session
     const deleteItem = (item) => {
         state.deleteSession(item._id)
-        //ToastAndroid.show(`Deleted`, ToastAndroid.SHORT)
     }
 
+    // This is the delete button and the logic to remove when sliding a session in the list.
     const renderHiddenItem = (data) => (
         <View style={styles.rowBack}>
             <TouchableOpacity
@@ -59,6 +63,7 @@ const Visualize = (state) => {
         </View>
     );
 
+    // This is a single session in the list.
     const renderItem = data => (
         <TouchableHighlight
             onPress={() => loadVisualization(data.item)}
@@ -70,10 +75,10 @@ const Visualize = (state) => {
         </TouchableHighlight>
     );
 
+
     const fixCoordinates = (locations, collisions) => {
         if(locations.length < 2){
             console.log("bad data")
-            //fixa den if-satsen kanske, men funkar for now
             return({
                 locations: [{}],
                 collisions: [{}],
@@ -157,6 +162,7 @@ const Visualize = (state) => {
     return(
         <View style={styles.body}>
             <View style={styles.container}>
+                {/* Will render a scrollable and swipable list with data */}
                 <SwipeListView
                     data={state.sessions.sessions}
                     renderItem={renderItem}
@@ -167,10 +173,6 @@ const Visualize = (state) => {
                 />
 
                 </View>
-                {/* TODO: Fixa scaling för SVGn. Får nog bli att anpassa koordinaterna efter en 1000x1000 kvadrat, sedan scala SVGn så:
-                 https://stackoverflow.com/questions/48602395/how-can-i-automatically-scale-an-svg-element-within-a-react-native-view
-                 
-                 Hade egentligen velat bevara aspect ratio (inte bara kvadrat), men vill inte lägga fler timmar på detta nu... JO DET VILL JAG VISST!!!*/}
             <View style={styles.container2}>
                 <View>
                     <View style={{
@@ -180,6 +182,7 @@ const Visualize = (state) => {
                     }}
                     >
                         {/* <View style={{ aspectRatio: fixCoordinates(locations, collisions).aspectRatio, backgroundColor: 'blue' }}> */}
+                        {/* Draws locations (black svg circles) and collisions (red svg circles) using the state that was updated when a session is clicked in the list  */}
                             <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)} ${1000/Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)}`}>
                                 {fixCoordinates(locations, collisions).locations.map((data, index) =>
                                     <Circle
@@ -200,7 +203,6 @@ const Visualize = (state) => {
                                     />
                                 )}
                             </Svg>
-                        {/* </View> */}
                     </View>
                 </View>
             </View>
@@ -208,10 +210,12 @@ const Visualize = (state) => {
     )
 }
 
+// This enables access to the variables in the redux reducers to this react component.
 const mapStateToProps = state => ({
     sessions: state.sessions
 })
 
+// This connects this react component to the redux store
 export default connect(mapStateToProps, {getSessions, deleteSession})(Visualize)
 
 const styles = StyleSheet.create({
