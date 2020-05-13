@@ -9,6 +9,8 @@ const initialState = {}
 const middleware = [thunk]
 
 import sessions from "./store/reducers/sessions"
+console.disableYellowBox = true;
+
 
 // This is a helper function that will combine multiple reducers to pass into createStore.
 const rootReducer = combineReducers({sessions});

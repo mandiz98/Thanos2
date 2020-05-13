@@ -16,7 +16,9 @@ import BleManager from "react-native-ble-manager"
 import Icon from 'react-native-vector-icons/Ionicons';
 import {startSession, stopSession} from "../store/actions/sessions"
 import {connect} from "react-redux"
-
+import Svg, {
+  Circle,
+} from 'react-native-svg'
 
 //MAC address, CHaracteristic id and service id of robot
 const MAC = '00:1B:10:65:FA:CC'
@@ -74,18 +76,18 @@ class Controller extends React.Component {
                   
           setTimeout(() => {
             BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-              console.log('Started notification on ' + MAC);
+              //console.log('Started notification on ' + MAC);
               setTimeout(() => {
                 BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                  console.log("Success Write");
+                  //console.log("Success Write");
                   
                 }).catch((e) => {
-                  console.log(e)
+                  //console.log(e)
                 });
     
               }, 0);
             }).catch((error) => {
-              console.log('Notification error', error);
+              //console.log('Notification error', error);
             });
           }, 0);
         });
@@ -98,18 +100,18 @@ class Controller extends React.Component {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
@@ -123,18 +125,18 @@ class Controller extends React.Component {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
@@ -148,18 +150,18 @@ class Controller extends React.Component {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
@@ -169,23 +171,22 @@ class Controller extends React.Component {
       async startAuto(){
         this.setState({mode: 'a'})
         const data = stringToBytes('a');
-
         BleManager.retrieveServices(MAC).then((peripheralInfo) => {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
@@ -199,18 +200,18 @@ class Controller extends React.Component {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
@@ -223,18 +224,18 @@ class Controller extends React.Component {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
@@ -264,30 +265,148 @@ class Controller extends React.Component {
                   
             setTimeout(() => {
               BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-                console.log('Started notification on ' + MAC);
+                //console.log('Started notification on ' + MAC);
                 setTimeout(() => {
                   BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-                    console.log("Success Write");
+                    //console.log("Success Write");
                     
                   }).catch((e) => {
-                    console.log(e)
+                    //console.log(e)
                   });
       
                 }, 0);
               }).catch((error) => {
-                console.log('Notification error', error);
+                //console.log('Notification error', error);
               });
             }, 0);
           });
       }
 
-
+      
     render(){
+
+      //takes the locations and collisions and calculates where to draw them, aspect ratio, etc.
+      const fixCoordinates = (locations, collisions) => {
+        if(locations.length < 2){
+          //too few points causes scaling calculation issues. We could fix it i guess but this is the lazy solution.
+            return({
+                locations: [{}],
+                collisions: [{}],
+                aspectRatio: 1
+            });
+        }
+
+        let xMin = Infinity;
+        let xMax = -Infinity;
+        let yMin = Infinity;
+        let yMax = -Infinity;
+
+        for(const location of locations){
+            if(location.x < xMin){
+                xMin = location.x;
+            }
+            if(location.x > xMax){
+                xMax = location.x;
+            }
+            if(location.y < yMin){
+                yMin = location.y;
+            }
+            if(location.y > yMax){
+                yMax = location.y;
+            }
+        }
+        for(const collision of collisions){
+            if(collision.x < xMin){
+                xMin = collision.x;
+            }
+            if(collision.x > xMax){
+                xMax = collision.x;
+            }
+            if(collision.y < yMin){
+                yMin = collision.y;
+            }
+            if(collision.y > yMax){
+                yMax = collision.y;
+            }
+        }
+
+        let xDiff = xMax-xMin;
+        let yDiff = yMax-yMin;
+
+        let aspectRatio = xDiff/yDiff;
+
+        const width = 1000*Math.sqrt(aspectRatio);
+        const height = 1000/Math.sqrt(aspectRatio);
+
+        
+
+        const xMargin = 0.1*width;
+        const yMargin = 0.1*height;
+        //on each side
+
+        const xFactor = (width - 2*xMargin)/xDiff;
+        const yFactor = (height - 2*yMargin)/yDiff;
+
+        let newLocations = locations;
+        let newCollisions = collisions;
+
+        for(const location of newLocations){
+            location.x = (location.x - xMin) * xFactor + xMargin;
+            location.y = (location.y - yMin) * yFactor + yMargin;
+        }
+        for(const collision of newCollisions){
+            collision.x = (collision.x - xMin) * xFactor + xMargin;
+            collision.y = (collision.y - yMin) * yFactor + yMargin;
+        }
+
+        
+        let returnObject = {
+            locations: newLocations,
+            collisions: newCollisions,
+            aspectRatio: aspectRatio
+        };
+        return returnObject;
+    };
+
+
+    let locationsCopy = JSON.parse(JSON.stringify(this.props.sessions.currentSessionLocations));
+    let collisionsCopy = JSON.parse(JSON.stringify(this.props.sessions.currentSessionCollisions));
+    //Converting to JSON and back does a "deep copy" of the array, removing all references to the original. Per https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089
+    let returnObject = fixCoordinates(locationsCopy, collisionsCopy);
         return(
             <View style = {styles.container}>
 
                 <View style = {styles.box}>
-                                    
+                  <View>
+                      <View style={{
+                          width: '100%',
+                          height: '100%',
+                          alignItems: 'center'
+                      }}
+                      >       
+                              {/* draws locations and collisisonsin real time */}
+                              <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(returnObject.aspectRatio)} ${1000/Math.sqrt(returnObject.aspectRatio)}`}>
+                                  {returnObject.locations.map((data, index) =>
+                                      <Circle
+                                          key={data._id}
+                                          cx={data.x}
+                                          cy={data.y}
+                                          r="20"
+                                          fill="black"
+                                      />
+                                  )}
+                                  {returnObject.collisions.map((data, index) =>
+                                      <Circle
+                                          key={data._id}
+                                          cx={data.x}
+                                          cy={data.y}
+                                          r="20"
+                                          fill="red"
+                                      />
+                                  )}
+                              </Svg>
+                      </View>
+                  </View>          
                 </View>
 
                 <View style={styles.menuBar}>
@@ -329,7 +448,7 @@ class Controller extends React.Component {
 
                       <TouchableOpacity onPress={this.break}>
                             <Text style={styles.stopBtn}>STOP</Text>
-                      </TouchableOpacity>            
+                      </TouchableOpacity>         
                     </View>
 
                     

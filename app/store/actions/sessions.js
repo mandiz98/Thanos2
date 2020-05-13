@@ -1,4 +1,4 @@
-import {SESSIONS, STARTSESSION, STOPSESSION, DELETE} from "./types"
+import {SESSIONS, STARTSESSION, STOPSESSION, DELETE, REALTIMERENDERLOCATIONS, REALTIMERENDERCOLLISIONS} from "./types"
 import axios from "axios"
 const url = "http://thanos2api.herokuapp.com"
 
@@ -55,3 +55,42 @@ export const getSessions = () => async dispatch => {
     }
 }
 
+ //Post the location coordinates to the backend
+ export const postLocation = (currentSessionId,x, y) => async dispatch => {
+    try{
+        const postLocationUrl = url + "/session/" + currentSessionId + "/locations"
+        //console.log("URL from sessions ACTION: ",postLocationUrl)
+        const res = await axios.post(postLocationUrl,{
+            x: x,
+            y: y
+        })
+        console.log("res.data.locations in sessions.js", res.data.locations)
+        dispatch({
+            type: REALTIMERENDERLOCATIONS,
+            payload: res.data
+        })
+    }catch(err){
+        console.error("postLocation", err)
+    }       
+  }
+
+
+   //Post the collision coordinates to the backend
+ export const postCollision = (currentSessionId,x, y) => async dispatch => {
+    try{
+        const postCollisionUrl = url + "/session/" + currentSessionId + "/collisions"
+        //console.log("URL from sessions ACTION: ",postLocationUrl)
+        const res = await axios.post(postCollisionUrl,{
+            x: x,
+            y: y
+        })
+        //console.log("res.data postCollisions: ",res.data)
+        //console.log("res.data.collisions postCollisions  in sessions.js: ",res.data.collisions)
+        dispatch({
+            type: REALTIMERENDERCOLLISIONS,
+            payload: res.data
+        })
+    }catch(err){
+        console.error("postCollision", err)
+    }       
+  }

@@ -24,14 +24,8 @@ const Visualize = (state) => {
 
     // Initial states of locations and collisions
     const [locations, setLocations] = useState([{
-        _id: "",
-        x: null,
-        y: null,
     }])
     const [collisions, setCollisions] = useState([{
-        _id: "",
-        x: null,
-        y: null
     }])
     
 
@@ -78,7 +72,6 @@ const Visualize = (state) => {
 
     const fixCoordinates = (locations, collisions) => {
         if(locations.length < 2){
-            console.log("bad data")
             return({
                 locations: [{}],
                 collisions: [{}],
@@ -120,6 +113,7 @@ const Visualize = (state) => {
             }
         }
 
+
         let xDiff = xMax-xMin;
         let yDiff = yMax-yMin;
 
@@ -155,7 +149,7 @@ const Visualize = (state) => {
             collisions: newCollisions,
             aspectRatio: aspectRatio
         };
-        console.log(returnObject);
+        //console.log("returnObject from viz", returnObject);
         return returnObject;
     };
 
@@ -181,7 +175,6 @@ const Visualize = (state) => {
                         alignItems: 'center'
                     }}
                     >
-                        {/* <View style={{ aspectRatio: fixCoordinates(locations, collisions).aspectRatio, backgroundColor: 'blue' }}> */}
                         {/* Draws locations (black svg circles) and collisions (red svg circles) using the state that was updated when a session is clicked in the list  */}
                             <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)} ${1000/Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)}`}>
                                 {fixCoordinates(locations, collisions).locations.map((data, index) =>

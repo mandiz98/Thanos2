@@ -27,6 +27,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from "axios"
 import {connect} from "react-redux"
 
+import {postLocation, postCollision} from "../store/actions/sessions"
+
 
 
 
@@ -55,23 +57,28 @@ class Connect extends React.Component {
 
   //Event listener that listens for data from the robot
   handleUpdateValueForCharacteristic(data) {
-    console.log("Read success: ", String.fromCharCode.apply(null, data.value))
+    //console.log("Read success: ", String.fromCharCode.apply(null, data.value))
     //Fetch the current session id if it exists
     let currentId = this.props.sessions.currentSessionId
     //Only read the data if there is an active session 
     if(currentId != ""){
       //If the recieved data string starts with a 0 it is a normal location. E.g. "0,34,76"
       if(String.fromCharCode(data.value[0]) == '0'){
-        console.log("Coordinates: ", data.value)
+        //console.log("Coordinates: ", data.value)
         var x,y
         var arr = String.fromCharCode.apply(null, data.value).split(",")
         x = arr[1]
         y = arr[2]
+        //console.log("x from mower: ",x)
+        //console.log("y from mower: ",y)
+        //console.log("currentId from connect.js: ", currentId)
         //Post location to the backend if the robot is moving
-        if(x != prevX && y != prevY){
-          this.postLocation(x,y)
+        if(x != prevX && y != prevY && x != null && y != null){
+          //console.log("current session locations from connect.js: ",this.props.sessions.currentSessionLocations)
+          this.props.postLocation(currentId,x,y)
+          //this.oldPostLocation(x,y)
         }else{
-          console.log("Robot is not moving")
+          //console.log("Robot is not moving")
         }
 
         prevX = x
@@ -80,17 +87,19 @@ class Connect extends React.Component {
         //If the recieved data string starts with a 1 it is a collision location. E.g. "1,34,76"
       } else if (String.fromCharCode(data.value[0]) == '1' ) {
         //Collision
-        console.log("Collision: ", data.value)
+        //console.log("Collision: ", data.value)
         var x,y
         var arr = String.fromCharCode.apply(null, data.value).split(",")
         x = arr[1]
         y = arr[2]
         //Post location of the collision to the backend and alert the user
-        if(x != prevCollX && y != prevCollY){
-          alert("Collision at X:"+x+", Y:"+y)
-          this.postCollision(x,y)
+        if(x != prevCollX && y != prevCollY && x != null && y != null){
+          //alert("Collision at X:"+x+", Y:"+y)
+          //console.log("current session collisions from connect.js: ",this.props.sessions.currentSessionCollisions)
+          this.props.postCollision(currentId,x,y)
+          //this.oldPostCollision(x,y)
         }else{
-          console.log("Same collison")
+          //console.log("Same collison")
         }
 
         prevCollX = x
@@ -98,39 +107,39 @@ class Connect extends React.Component {
   
         }
     }else{
-      console.log("No session running!")
+      //console.log("No session running!")
     }
   }
 
-  //Post the location coordinates to the backend
-  async postLocation(x, y){
-    var id = this.props.sessions.currentSessionId;
-    axios.post(url + "/session/"+id+"/locations", {
-      x: x,
-      y: y
-    })
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+  // //Post the location coordinates to the backend
+  // async oldPostLocation(x, y){
+  //   var id = this.props.sessions.currentSessionId;
+  //   axios.post(url + "/session/"+id+"/locations", {
+  //     x: x,
+  //     y: y
+  //   })
+  //   .then((response) => {
+  //     //console.log(response)
+  //   })
+  //   .catch((error) => {
+  //     //console.log(error)
+  //   })
             
-  }
-  //Post the collision coordinates to the backend
-  async postCollision(x, y){
-    var id = this.props.sessions.currentSessionId;
-    axios.post(url + "/session/"+id+"/collisions", {
-      x: x,
-      y: y
-    })
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-  }
+  // }
+  // //Post the collision coordinates to the backend
+  // async oldPostCollision(x, y){
+  //   var id = this.props.sessions.currentSessionId;
+  //   axios.post(url + "/session/"+id+"/collisions", {
+  //     x: x,
+  //     y: y
+  //   })
+  //   .then((response) => {
+  //     //console.log(response)
+  //   })
+  //   .catch((error) => {
+  //     //console.log(error)
+  //   })
+  // }
   //The robot starts playing Despasito to cheer up the people around it
   async thanosClicked(){
     const data = stringToBytes('6');
@@ -139,25 +148,25 @@ class Connect extends React.Component {
               
       setTimeout(() => {
         BleManager.startNotification(MAC, serviceID, characteristicID).then(() => {
-          console.log('Started notification on ' + MAC);
+          //console.log('Started notification on ' + MAC);
           setTimeout(() => {
             BleManager.write(MAC, "ffe1", "ffe3", data).then(() => {
-              console.log("Success Write");
+              //console.log("Success Write");
               
             }).catch((e) => {
-              console.log(e)
+              //console.log(e)
             });
 
           }, 0);
         }).catch((error) => {
-          console.log('Notification error', error);
+          //console.log('Notification error', error);
         });
       }, 0);
     });
   }
   //Starts the event listener thats reads data from the robot
   async startRead(){
-    console.log("----------------------------------------------------")
+    //console.log("----------------------------------------------------")
 
     AppState.addEventListener('change', this.handleAppStateChange);
     BleManager.start({showAlert: false});
@@ -168,10 +177,10 @@ class Connect extends React.Component {
                   
       setTimeout(() => {
         BleManager.startNotification(MAC, "ffe1", "ffe2").then(() => {
-          console.log('Started notification on ' + MAC);
+          //console.log('Started notification on ' + MAC);
           
         }).catch((error) => {
-          console.log('Notification error', error);
+          //console.log('Notification error', error);
         });
       }, 0);
     });
@@ -182,17 +191,17 @@ class Connect extends React.Component {
     await BleManager.start({showAlert: false})
     .then(() => {
       // Success code
-      console.log('Module initialized');
+      //console.log('Module initialized');
     });
     //Connect
     await BleManager.connect(MAC)
     .catch((e) => {
-      console.log(e)
+      //console.log(e)
     })
     //Get peripherals
     await BleManager.isPeripheralConnected(MAC)
     .then((isConnected) => {
-      console.log(isConnected)
+      //console.log(isConnected)
     })
     //Start Listener
     this.startRead();
@@ -222,7 +231,7 @@ const mapStateToProps = state => ({
   sessions: state.sessions
 })
 
-export default connect(mapStateToProps)(Connect)
+export default connect(mapStateToProps, {postLocation, postCollision})(Connect)
 
 //Custom styles
 const styles = StyleSheet.create({
