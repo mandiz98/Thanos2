@@ -84,8 +84,6 @@ export const getSessions = () => async dispatch => {
             x: x,
             y: y
         })
-        //console.log("res.data postCollisions: ",res.data)
-        //console.log("res.data.collisions postCollisions  in sessions.js: ",res.data.collisions)
         dispatch({
             type: REALTIMERENDERCOLLISIONS,
             payload: res.data

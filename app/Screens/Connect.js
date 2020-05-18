@@ -64,19 +64,13 @@ class Connect extends React.Component {
     if(currentId != ""){
       //If the recieved data string starts with a 0 it is a normal location. E.g. "0,34,76"
       if(String.fromCharCode(data.value[0]) == '0'){
-        //console.log("Coordinates: ", data.value)
         var x,y
         var arr = String.fromCharCode.apply(null, data.value).split(",")
         x = arr[1]
         y = arr[2]
-        //console.log("x from mower: ",x)
-        //console.log("y from mower: ",y)
-        //console.log("currentId from connect.js: ", currentId)
         //Post location to the backend if the robot is moving
         if(x != prevX && y != prevY && x != null && y != null){
-          //console.log("current session locations from connect.js: ",this.props.sessions.currentSessionLocations)
           this.props.postLocation(currentId,x,y)
-          //this.oldPostLocation(x,y)
         }else{
           //console.log("Robot is not moving")
         }
@@ -87,7 +81,6 @@ class Connect extends React.Component {
         //If the recieved data string starts with a 1 it is a collision location. E.g. "1,34,76"
       } else if (String.fromCharCode(data.value[0]) == '1' ) {
         //Collision
-        //console.log("Collision: ", data.value)
         var x,y
         var arr = String.fromCharCode.apply(null, data.value).split(",")
         x = arr[1]
@@ -95,7 +88,6 @@ class Connect extends React.Component {
         //Post location of the collision to the backend and alert the user
         if(x != prevCollX && y != prevCollY && x != null && y != null){
           //alert("Collision at X:"+x+", Y:"+y)
-          //console.log("current session collisions from connect.js: ",this.props.sessions.currentSessionCollisions)
           this.props.postCollision(currentId,x,y)
           //this.oldPostCollision(x,y)
         }else{
@@ -111,36 +103,7 @@ class Connect extends React.Component {
     }
   }
 
-  // //Post the location coordinates to the backend
-  // async oldPostLocation(x, y){
-  //   var id = this.props.sessions.currentSessionId;
-  //   axios.post(url + "/session/"+id+"/locations", {
-  //     x: x,
-  //     y: y
-  //   })
-  //   .then((response) => {
-  //     //console.log(response)
-  //   })
-  //   .catch((error) => {
-  //     //console.log(error)
-  //   })
-            
-  // }
-  // //Post the collision coordinates to the backend
-  // async oldPostCollision(x, y){
-  //   var id = this.props.sessions.currentSessionId;
-  //   axios.post(url + "/session/"+id+"/collisions", {
-  //     x: x,
-  //     y: y
-  //   })
-  //   .then((response) => {
-  //     //console.log(response)
-  //   })
-  //   .catch((error) => {
-  //     //console.log(error)
-  //   })
-  // }
-  //The robot starts playing Despasito to cheer up the people around it
+  //The robot starts playing Despacito to cheer up the people around it
   async thanosClicked(){
     const data = stringToBytes('6');
 
