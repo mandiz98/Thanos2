@@ -1,3 +1,11 @@
+/** 
+ * main.cpp
+ * main file for the mower.
+ * property of project group Thanos2
+ * Written by Edvin Egerhag and Filip Carlsson
+*/
+
+//includes
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <Wire.h>
@@ -6,12 +14,12 @@
 #include <MeGyro.h>
 #include "manual.h"
 
+//variables needed during execution
+Jukebox jukebox;              //glorified horn
+byte x;                       //commands from the app is stored here
+bool manualStartFlag = false; //used when checking if it is the first time we enter the manual mode state machine
 
-Jukebox jukebox;
-//MeGyro gyroscope(1, 0x69);
-byte x;
-bool manualStartFlag = false;
-
+//used in the state machine to determine what mode to enter
 enum DRIVE_MODE
 {
   DM_STOP,
@@ -20,35 +28,29 @@ enum DRIVE_MODE
 };
 DRIVE_MODE CURRENT_MODE = DM_STOP;
 
+//function declarations
 void autopilot(void);
 void manualMode(char x);
 
 // put your setup code here, to run once:
 void setup()
 {
-  Serial.begin(115200);
-  gyroscope.begin();
+  Serial.begin(115200); //open a serial port for communication
+  gyroscope.begin();    //starting gyroscope
   delay(100);
 }
 
 // put your main code here, to run repeatedly:
 void loop()
 {
-  /*gyroscope.fast_update();
-  double angle = gyroscope.getAngleZ();
-  if(Serial.available())
-    Serial.println(angle);*/
-  //use serial read to determine mode, use switch case to set mower to correct mode, variable CURRENT_MODE
   if (Serial.available())
   {
-    //Serial.println(angle);   
-    //Serial.println((us.distanceCm() < 10));
-    //delay(200);
-    x = Serial.read();
+    x = Serial.read(); //reading command from app
     x = char(x);
+
+    //set the mower to correct mode depending on command from app
     if (x == 'a')
     {
-      //driver.Drive(180);
       CURRENT_MODE = AUTOPILOT;
       autopilotMode = START;
     }
@@ -65,10 +67,11 @@ void loop()
       jukebox.play(DESPACITO);
     }
     else if (x == 's')
-     CURRENT_MODE = DM_STOP;
+      CURRENT_MODE = DM_STOP;
     delay(1);
   }
 
+  //State machine that executes the code depending on what mode it is in
   switch (CURRENT_MODE)
   {
   case DM_STOP:
@@ -80,12 +83,12 @@ void loop()
     break;
 
   case MANUAL:
-    if(manualStartFlag)
+    if(manualStartFlag) //if we come from autopilot mode to manual mode we want to stop the mower before we drive manually
     {
       driver.stop();
       manualStartFlag = false;
     }
-    manualMode(x);
+    manualMode(x); //sends command from app to manual drive function 
     break;
 
   default:

@@ -5,25 +5,26 @@
  * @author Edvin Egerhag, Thanos2
  * @version 0.1
  * @date 16/04/2020
- * @brief Source file for Jukebox.h
+ * @brief Source file for Jukebox.h. This class controls the buzzer, it can play a few songs, or a regular buzz
  * 
  * \par Method list:
  * 
  *      1. void Jukebox::play(int song);
 */
 
+//contains notes 
 #include "Jukebox.h"
 
 Jukebox::Jukebox()
 {
-    _buzzer.setpin(45);
+    _buzzer.setpin(45); //connect to the buzzer
 }
 
 Jukebox::~Jukebox()
 {
 }
 
-void Jukebox::play(int song)
+void Jukebox::play(int song) //this function stores the song info in two arrays.
 {
     if (song == LACUCARACHA)
     {
@@ -36,7 +37,7 @@ void Jukebox::play(int song)
              QUARTER, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH};
 
         _size = 18; //cannot use sizeof on arrays defined at runtime
-        sing(melody, duration);
+        sing(melody, duration); //play the song
     }
 
     else if(song == DESPACITO)
@@ -68,7 +69,7 @@ void Jukebox::play(int song)
         sing(melody, duration);
     }
 
-    else if(song == BASICBITCH)
+    else if(song == BASICBITCH) //regular buzzer
         {
             _buzzer.tone(440, 100);
             _buzzer.noTone();

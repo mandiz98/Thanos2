@@ -2,7 +2,7 @@
  * \class MotorCommands
  * \brief Class used to control the onboard motors on the mower
  * @file MotorCommands.cpp
- * @author Edvin Egerhag, Thanos2
+ * @author Thanos2
  * @version 0.1
  * @date 07/04/2020
  * @brief source file for MotorCommands.h
@@ -15,7 +15,7 @@
 */
 #include "MotorCommands.h"
 
-MotorCommands::MotorCommands()
+MotorCommands::MotorCommands() //connect to motors
 {
     _motor1.setPin(SLOT1);
     _motor2.setPin(SLOT2);
@@ -25,6 +25,7 @@ MotorCommands::~MotorCommands()
 {
 }
 
+//drives forward or backwards, forward if speed > 0 else backwards
 void MotorCommands::Drive(int speed)
 {
     _motor1.setMotorPwm(-speed);
@@ -56,6 +57,8 @@ void MotorCommands::Turn(int direction)
     }
 }
 
+//this function takes an angle between 0 and 360 and uses that to determine motorspeed.
+//this function is not used in our final build
 void MotorCommands::test(int turnAngle)
 {
     if(turnAngle >= 0 && turnAngle < 180)
