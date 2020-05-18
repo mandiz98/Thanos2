@@ -6,7 +6,7 @@ const initialState = {
     sessions: [],
     currentSessionId: "",
     currentSessionLocations: [],
-    currentSessionCollisions: []
+    currentSessionCollisions: [],
 }
 
 // Depending on what the redux action function that are executed will the data inside the variable above be updated. 
@@ -35,7 +35,7 @@ export default function(state = initialState, action){
                 sessions: [...state.sessions, payload],
                 currentSessionId: "",
                 currentSessionLocations: [],
-                currentSessionCollisions: []
+                currentSessionCollisions: [],
             }
         case DELETE:
             return{

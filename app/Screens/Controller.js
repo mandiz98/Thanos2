@@ -18,6 +18,7 @@ import {startSession, stopSession} from "../store/actions/sessions"
 import {connect} from "react-redux"
 import Svg, {
   Circle,
+  Line
 } from 'react-native-svg'
 
 //MAC address, CHaracteristic id and service id of robot
@@ -45,7 +46,8 @@ class Controller extends React.Component {
         this.autoRunning= this.autoRunning.bind(this);
         //mode can either be a=auto or m=manual
         this.state = {
-          mode: 'a'
+          mode: 'a',
+          lines: []
         }
       }
 
@@ -246,6 +248,7 @@ class Controller extends React.Component {
         if(currentId != ""){
           this.stopAll()
           this.props.stopSession(currentId)
+          this.state.lines = []
           ToastAndroid.show(`Session Stopped`, ToastAndroid.SHORT)
         }else{
           ToastAndroid.show(`Start a session first`, ToastAndroid.SHORT)
@@ -368,98 +371,104 @@ class Controller extends React.Component {
         return returnObject;
     };
 
+    let lines = [];
 
     let locationsCopy = JSON.parse(JSON.stringify(this.props.sessions.currentSessionLocations));
     let collisionsCopy = JSON.parse(JSON.stringify(this.props.sessions.currentSessionCollisions));
     //Converting to JSON and back does a "deep copy" of the array, removing all references to the original. Per https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089
     let returnObject = fixCoordinates(locationsCopy, collisionsCopy);
-        return(
-            <View style = {styles.container}>
 
-                <View style = {styles.box}>
-                  <View>
-                      <View style={{
-                          width: '100%',
-                          height: '100%',
-                          alignItems: 'center'
-                      }}
-                      >       
-                              {/* draws locations and collisisonsin real time */}
-                              <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(returnObject.aspectRatio)} ${1000/Math.sqrt(returnObject.aspectRatio)}`}>
-                                  {returnObject.locations.map((data, index) =>
-                                      <Circle
-                                          key={data._id}
-                                          cx={data.x}
-                                          cy={data.y}
-                                          r="20"
-                                          fill="black"
-                                      />
-                                  )}
-                                  {returnObject.collisions.map((data, index) =>
-                                      <Circle
-                                          key={data._id}
-                                          cx={data.x}
-                                          cy={data.y}
-                                          r="20"
-                                          fill="red"
-                                      />
-                                  )}
-                              </Svg>
-                      </View>
-                  </View>          
-                </View>
+    for(let i = 1; i < returnObject.locations.length; i++){
+      lines.push(<Line x1={returnObject.locations[i-1].x} y1={returnObject.locations[i-1].y} x2={returnObject.locations[i].x} y2={returnObject.locations[i].y} stroke="black" strokeWidth="30"/>)
+    }
+      return(
+          <View style = {styles.container}>
 
-                <View style={styles.menuBar}>
-                  {/* Start and Stop button for the session */}
-                  { this.sessionRunning() ? <TouchableOpacity onPress={this.clickStop}>
-                      <Text style={styles.stopSession}> STOP </Text>
-                  </TouchableOpacity> : <TouchableOpacity onPress={this.clickStart}>
-                      <Text style={styles.startSession}> START </Text>
-                  </TouchableOpacity> }
+              <View style = {styles.box}>
+                <View>
+                    <View style={{
+                      width: '100%',
+                      height: '100%',
+                      alignItems: 'center'
+                    }}
+                    >       
+                      {/* draws locations and collisisonsin real time */}
+                      <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(returnObject.aspectRatio)} ${1000/Math.sqrt(returnObject.aspectRatio)}`}>
+                        {lines}
+                        {returnObject.locations.map((data, index) =>
+                            <Circle
+                                key={data._id}
+                                cx={data.x}
+                                cy={data.y}
+                                r="20"
+                                fill="black"
+                            />
+                        )}
+                        {returnObject.collisions.map((data, index) =>
+                            <Circle
+                                key={data._id}
+                                cx={data.x}
+                                cy={data.y}
+                                r="20"
+                                fill="red"
+                            />
+                        )}
+                      </Svg>
+                    </View>
+                </View>          
+              </View>
+
+              <View style={styles.menuBar}>
+                {/* Start and Stop button for the session */}
+                { this.sessionRunning() ? <TouchableOpacity onPress={this.clickStop}>
+                    <Text style={styles.stopSession}> STOP </Text>
+                </TouchableOpacity> : <TouchableOpacity onPress={this.clickStart}>
+                    <Text style={styles.startSession}> START </Text>
+                </TouchableOpacity> }
+                
+                {/* Switch between manual and auto mode button */}
+                { this.autoRunning() ? <TouchableOpacity onPress={this.startManual}>
+                    <Text style={styles.manBtn}> MANUAL </Text>
+                </TouchableOpacity> : <TouchableOpacity onPress={this.startAuto}>
+                    <Text style={styles.autoBtn}> AUTO </Text>
+                </TouchableOpacity> }
+
+
+              </View>
+              {/* Manual Controller buttons */}
+              <View style = {styles.row}>
+                  <StatusBar backgroundColor = {Colors.purple} />
                   
-                  {/* Switch between manual and auto mode button */}
-                  { this.autoRunning() ? <TouchableOpacity onPress={this.startManual}>
-                      <Text style={styles.manBtn}> MANUAL </Text>
-                  </TouchableOpacity> : <TouchableOpacity onPress={this.startAuto}>
-                      <Text style={styles.autoBtn}> AUTO </Text>
-                  </TouchableOpacity> }
+                  <View style={styles.upView}>
+                      <TouchableOpacity onPress={this.clickUp}>
+                          <Icon style={styles.upBtn} name={"ios-arrow-up"} color={Colors.white} size={2} />
+                      </TouchableOpacity> 
+                  </View>
 
+                  <View style={styles.leftRightView} >
 
-                </View>
-                {/* Manual Controller buttons */}
-                <View style = {styles.row}>
-                    <StatusBar backgroundColor = {Colors.purple} />
-                    
-                    <View style={styles.upView}>
-                        <TouchableOpacity onPress={this.clickUp}>
-                            <Icon style={styles.upBtn} name={"ios-arrow-up"} color={Colors.white} size={2} />
-                        </TouchableOpacity> 
-                    </View>
+                    <TouchableOpacity onPress={this.clickRight}>
+                        <Icon style={styles.rightBtn} name={"ios-arrow-forward"} color={Colors.white} size={2} />
+                    </TouchableOpacity>
 
-                    <View style={styles.leftRightView} >
+                    <TouchableOpacity onPress={this.clickLeft}>
+                        <Icon style={styles.leftBtn} name={"ios-arrow-back"} color={Colors.white} size={2} />
+                    </TouchableOpacity>          
 
-                      <TouchableOpacity onPress={this.clickRight}>
-                          <Icon style={styles.rightBtn} name={"ios-arrow-forward"} color={Colors.white} size={2} />
-                      </TouchableOpacity>
+                    <TouchableOpacity onPress={this.break}>
+                          <Text style={styles.stopBtn}>STOP</Text>
+                    </TouchableOpacity>         
+                  </View>
 
-                      <TouchableOpacity onPress={this.clickLeft}>
-                          <Icon style={styles.leftBtn} name={"ios-arrow-back"} color={Colors.white} size={2} />
-                      </TouchableOpacity>          
-
-                      <TouchableOpacity onPress={this.break}>
-                            <Text style={styles.stopBtn}>STOP</Text>
-                      </TouchableOpacity>         
-                    </View>
-
-                    
-                    <View style={styles.downView}>
-                        <TouchableOpacity  onPress={this.clickDown}>
-                            <Icon style={styles.downBtn} name={"ios-arrow-down"} color={Colors.white} size={2} />
-                        </TouchableOpacity>                                           
-                    </View>
-                </View>
-            </View>
-        )
+                  
+                  <View style={styles.downView}>
+                      <TouchableOpacity  onPress={this.clickDown}>
+                          <Icon style={styles.downBtn} name={"ios-arrow-down"} color={Colors.white} size={2} />
+                      </TouchableOpacity>                                           
+                  </View>
+              </View>
+          </View>
+      )
     }
 };
 

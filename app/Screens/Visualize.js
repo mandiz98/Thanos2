@@ -11,6 +11,7 @@ import Colors from "../Colors"
 
 import Svg, {
     Circle,
+    Line
 } from 'react-native-svg'
 import { connect } from "react-redux"
 import { getSessions, deleteSession } from "../store/actions/sessions"
@@ -153,6 +154,15 @@ const Visualize = (state) => {
         return returnObject;
     };
 
+    let locationsCopy = JSON.parse(JSON.stringify(locations));
+    let collisionsCopy = JSON.parse(JSON.stringify(collisions));
+    //Converting to JSON and back does a "deep copy" of the array, removing all references to the original. Per https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089
+    let returnObject = fixCoordinates(locationsCopy, collisionsCopy);
+
+    let lines = [];
+    for(let i = 1; i < returnObject.locations.length; i++){
+        lines.push(<Line x1={returnObject.locations[i-1].x} y1={returnObject.locations[i-1].y} x2={returnObject.locations[i].x} y2={returnObject.locations[i].y} stroke="black" strokeWidth="30"/>)
+    }
     return(
         <View style={styles.body}>
             <View style={styles.container}>
@@ -176,8 +186,9 @@ const Visualize = (state) => {
                     }}
                     >
                         {/* Draws locations (black svg circles) and collisions (red svg circles) using the state that was updated when a session is clicked in the list  */}
-                            <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)} ${1000/Math.sqrt(fixCoordinates(locations, collisions).aspectRatio)}`}>
-                                {fixCoordinates(locations, collisions).locations.map((data, index) =>
+                            <Svg height="100%" width="100%" viewBox={`0 0 ${1000*Math.sqrt(returnObject.aspectRatio)} ${1000/Math.sqrt(returnObject.aspectRatio)}`}>
+                                {lines}
+                                {returnObject.locations.map((data, index) =>
                                     <Circle
                                         key={data._id}
                                         cx={data.x}
@@ -186,12 +197,12 @@ const Visualize = (state) => {
                                         fill="black"
                                     />
                                 )}
-                                {fixCoordinates(locations, collisions).collisions.map((data, index) =>
+                                {returnObject.collisions.map((data, index) =>
                                     <Circle
                                         key={data._id}
                                         cx={data.x}
                                         cy={data.y}
-                                        r="40"
+                                        r="20"
                                         fill="red"
                                     />
                                 )}

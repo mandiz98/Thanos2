@@ -34,6 +34,8 @@ import {postLocation, postCollision} from "../store/actions/sessions"
 
 // MAC address of robot 
 const MAC = '00:1B:10:65:FA:CC'
+const characteristicID = 'e3dd50bf-f7a7-4e99-838e-570a086c666b'
+const serviceID = '9e5d1e47-5c13-43a0-8635-82ad38a1386f'
 //Backend API link
 const url = "http://thanos2api.herokuapp.com"
 // Global constant variables 
@@ -89,7 +91,7 @@ class Connect extends React.Component {
         if(x != prevCollX && y != prevCollY && x != null && y != null){
           //alert("Collision at X:"+x+", Y:"+y)
           this.props.postCollision(currentId,x,y)
-          //this.oldPostCollision(x,y)
+          this.props.postLocation(currentId,x,y)
         }else{
           //console.log("Same collison")
         }
